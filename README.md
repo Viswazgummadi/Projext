@@ -1,7 +1,7 @@
-deekshith (Captain)
-yuvan (key role player)
-akash BR
-tarun sai pola
-viswaz
-khagesh
-nikhil
+deekshith (Captain) /n
+yuvan (key role player) /n
+akash BR /n
+tarun sai pola /n
+viswaz /n
+khagesh /n
+nikhil /n

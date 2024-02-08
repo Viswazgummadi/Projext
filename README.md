@@ -1,7 +1,14 @@
-deekshith (Captain) /n
-yuvan (key role player) /n
-akash BR /n
-tarun sai pola /n
-viswaz /n
-khagesh /n
-nikhil /n
+# Project Team Members
+
+## Leadership
+- **Deekshith (Captain)**: Lead the team and oversee project progress.
+
+## Key Role Player
+- **Yuvan**: Responsible for critical tasks and providing support to the team.
+
+## Team Members
+- **Akash BR**
+- **Tarun Sai Pola**
+- **Viswaz**
+- **Khagesh**
+- **Nikhil**

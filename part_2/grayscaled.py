@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from PIL import Image
 
 
@@ -18,29 +19,12 @@ def convert_to_grayscale(input_folder, output_folder):
             # Open the image
             image = Image.open(input_path)
 
-            # Get the width and height of the image
-            width, height = image.size
+            # Convert the image to grayscale using NumPy
+            grayscale_image = np.dot(np.array(image, dtype=np.float32), [
+                                     0.21, 0.72, 0.07]).astype(np.uint8)
 
-            # Convert the image to grayscale
-            grayscale_image = Image.new('L', (width, height))
-
-            # Get the pixel data of the original image
-            pixels = list(image.getdata())
-
-            # Convert pixel data to list of lists representing the image
-            pixels = [pixels[i * width:(i + 1) * width] for i in range(height)]
-
-            # Iterate through each pixel and calculate the grayscale value
-            for y in range(height):
-                for x in range(width):
-                    # Get RGB values of the pixel
-                    r, g, b = pixels[y][x]
-
-                    # Calculate the grayscale value using weighted sum
-                    gray_value = int(0.21 * r + 0.72 * g + 0.07 * b)
-
-                    # Set the grayscale value for the corresponding pixel in the new image
-                    grayscale_image.putpixel((x, y), gray_value)
+            # Create a PIL image from the grayscale NumPy array
+            grayscale_image = Image.fromarray(grayscale_image)
 
             # Construct the full path of the output file
             output_path = os.path.join(output_folder, file_name)

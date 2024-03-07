@@ -3,9 +3,9 @@ import numpy as np
 from PIL import Image
 
 
-def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, pythogorized_output_folder):
+def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder):
     # Create the output folders if they don't exist
-    for folder in [grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, pythogorized_output_folder]:
+    for folder in [grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder]:
         if not os.path.exists(folder):
             os.makedirs(folder)
 
@@ -21,8 +21,7 @@ def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_f
             image = Image.open(input_path)
 
             # Convert the image to grayscale using NumPy
-            grayscale_image = np.dot(np.array(image, dtype=np.float32), [
-                                     0.21, 0.72, 0.07]).astype(np.uint8)
+            grayscale_image = np.array(image.convert('L'))
 
             # Construct the full path of the output file for grayscale image
             grayscale_output_path = os.path.join(
@@ -63,19 +62,32 @@ def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_f
             print(
                 f"Applied Sobel Y operator to {file_name} and saved as {sobel_y_output_path}")
 
-            # Calculate the hypotenuse of Sobel X and Sobel Y components
-            pythogorized_image = calculate_hypotenuse(
+            # Calculate the gradient magnitude image
+            gradient_magnitude = calculate_gradient_magnitude(
                 sobel_x_image, sobel_y_image)
 
-            # Construct the full path of the output file for pythogorized image
+            # Save the gradient magnitude image to the "pythogorized" folder
             pythogorized_output_path = os.path.join(
                 pythogorized_output_folder, file_name)
-
-            # Save the pythogorized image
-            Image.fromarray(pythogorized_image).save(
-                pythogorized_output_path)
+            Image.fromarray(gradient_magnitude).save(pythogorized_output_path)
             print(
-                f"Calculated hypotenuse and saved as {pythogorized_output_path}")
+                f"Calculated gradient magnitude and saved as {pythogorized_output_path}")
+
+            # Apply thresholding to detect edges
+            strong_edges, weak_edges = apply_threshold(
+                gradient_magnitude, low_threshold=50, high_threshold=150)
+
+            # Apply edge tracking to connect weak edges to strong edges
+            edge_map = edge_tracking(strong_edges, weak_edges)
+
+            # Construct the full path of the output file for edge map
+            edge_map_output_path = os.path.join(
+                edge_map_output_folder, file_name)
+
+            # Save the edge map
+            Image.fromarray(edge_map.astype(np.uint8)
+                            ).save(edge_map_output_path)
+            print(f"Detected edges and saved as {edge_map_output_path}")
 
         except Exception as e:
             print(f"Error processing {file_name}: {str(e)}")
@@ -83,9 +95,8 @@ def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_f
 
 def apply_gaussian_blur(image):
     # Define the Gaussian blur kernel
-    kernel = np.array([[1, 2, 1],
-                       [2, 4, 2],
-                       [1, 2, 1]]) / 16  # Normalize the kernel
+    kernel = np.array([[1, 2, 1], [2, 4, 2], [1, 2, 1]]) / \
+        16  # Normalize the kernel
 
     # Apply convolution using NumPy's convolve function
     blurred_image = np.zeros_like(image)
@@ -97,9 +108,7 @@ def apply_gaussian_blur(image):
 
 def apply_sobel_x(image):
     # Sobel X operator
-    sobel_x_kernel = np.array([[-1, 0, 1],
-                               [-2, 0, 2],
-                               [-1, 0, 1]])
+    sobel_x_kernel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
 
     # Apply convolution using NumPy's convolve function
     sobel_x_image = np.zeros_like(image)
@@ -111,9 +120,7 @@ def apply_sobel_x(image):
 
 def apply_sobel_y(image):
     # Sobel Y operator
-    sobel_y_kernel = np.array([[-1, -2, -1],
-                               [0, 0, 0],
-                               [1, 2, 1]])
+    sobel_y_kernel = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
 
     # Apply convolution using NumPy's convolve function
     sobel_y_image = np.zeros_like(image)
@@ -123,15 +130,41 @@ def apply_sobel_y(image):
     return sobel_y_image.astype(np.uint8)
 
 
-def calculate_hypotenuse(sobel_x_image, sobel_y_image):
-    # Calculate hypotenuse
-    pythogorized_image = np.sqrt(
-        sobel_x_image.astype(np.float32)**2 + sobel_y_image.astype(np.float32)**2)
-    # Normalize to 0-255
-    pythogorized_image = (pythogorized_image /
-                          np.max(pythogorized_image)) * 255
+def calculate_gradient_magnitude(sobel_x_image, sobel_y_image):
+    # Calculate gradient magnitude
+    gradient_magnitude = np.sqrt(sobel_x_image.astype(
+        np.float32)**2 + sobel_y_image.astype(np.float32)**2)
 
-    return pythogorized_image.astype(np.uint8)
+    return gradient_magnitude.astype(np.uint8)
+
+
+def apply_threshold(image, low_threshold, high_threshold):
+    strong_edges = (image >= high_threshold)
+    weak_edges = (image >= low_threshold) & (image < high_threshold)
+    return strong_edges, weak_edges
+
+
+def edge_tracking(strong_edges, weak_edges):
+    edge_map = np.zeros_like(strong_edges, dtype=np.uint8)
+    edge_map[strong_edges] = 255
+
+    # Define the kernel for edge tracking
+    kernel = np.array([[1, 1, 1],
+                       [1, 0, 1],
+                       [1, 1, 1]])
+
+    # Reshape weak_edges to match the shape expected by the convolution operation
+    weak_edges_reshaped = weak_edges.astype(np.float32)
+
+    # Apply edge tracking to connect weak edges to strong edges
+    convolved = np.convolve(weak_edges_reshaped.flatten(),
+                            kernel.flatten(), mode='same')
+    convolved_reshaped = convolved.reshape(weak_edges.shape)
+    edge_map[(convolved_reshaped > 0) & strong_edges] = 255
+
+    return edge_map
+
+
 
 
 if __name__ == "__main__":
@@ -139,10 +172,11 @@ if __name__ == "__main__":
     input_folder = "train"
     grayscale_output_folder = "grayscaled"
     blurred_output_folder = "blurred"
-    sobel_x_output_folder = "sobel_X"
-    sobel_y_output_folder = "sobel_Y"
+    sobel_x_output_folder = "sobel_x"
+    sobel_y_output_folder = "sobel_y"
+    edge_map_output_folder = "edge_maps"
     pythogorized_output_folder = "pythogorized"
 
-    # Convert images to grayscale and apply Gaussian blur
-    convert_to_grayscale(input_folder, grayscale_output_folder,
-                         blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, pythogorized_output_folder)
+    # Convert images to grayscale and detect edges
+    convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_folder,
+                         sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder)

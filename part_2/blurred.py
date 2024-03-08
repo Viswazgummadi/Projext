@@ -75,7 +75,7 @@ def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_f
 
             # Apply thresholding to detect edges
             strong_edges, weak_edges = apply_threshold(
-                gradient_magnitude, low_threshold=50, high_threshold=150)
+                gradient_magnitude, low_threshold=100, high_threshold=200)
 
             # Apply edge tracking to connect weak edges to strong edges
             edge_map = edge_tracking(strong_edges, weak_edges)
@@ -96,7 +96,7 @@ def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_f
 def apply_gaussian_blur(image):
     # Define the Gaussian blur kernel
     kernel = np.array([[1, 2, 1], [2, 4, 2], [1, 2, 1]]) / \
-        16  # Normalize the kernel
+        24  # Normalize the kernel
 
     # Apply convolution using NumPy's convolve function
     blurred_image = np.zeros_like(image)

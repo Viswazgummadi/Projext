@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+</head>
+<body>
+
+<h1>Image Gallery</h1>
+<!-- Include jQuery for simplicity (you can download it or use a CDN) -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        // Read the CSV file using AJAX
+        $.ajax({
+            type: "GET",
+            url: "image_names.csv",
+            dataType: "text",
+            success: function(data) {
+                // Split the CSV data into an array of image names
+                var imageNames = data.split("\n");
+
+                // Iterate through the image names and dynamically create image tags
+                for (var i = 0; i < imageNames.length; i++) {
+                    var imageName = imageNames[i].trim();
+                    if (imageName !== "") {
+                        var imgTag = '<img src="tshirt/' + imageName + '" alt="Image ' + (i + 1) + '">';
+                        $("body").append(imgTag);
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

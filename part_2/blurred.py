@@ -1,9 +1,34 @@
 import os
 import numpy as np
 from PIL import Image
+import cv2
 
 
-def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder):
+def remove_small_discontinuous_edges(edge_map, min_contour_area=100):
+    # Convert edge map to binary image
+    binary_edge_map = np.uint8(edge_map > 0)
+
+    # Find contours in the binary image
+    contours, _ = cv2.findContours(
+        binary_edge_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Create a mask to store the areas of contours
+    contour_area_mask = np.zeros_like(edge_map)
+
+    # Filter contours based on area
+    for contour in contours:
+        contour_area = cv2.contourArea(contour)
+        if contour_area >= min_contour_area:
+            # Fill the contour area in the mask
+            cv2.drawContours(contour_area_mask, [contour], -1, 255, -1)
+
+    # Use the mask to keep only larger continuous edges
+    filtered_edge_map = cv2.bitwise_and(edge_map, contour_area_mask)
+
+    return filtered_edge_map
+
+
+def enigma(input_folder, grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder):
     # Create the output folders if they don't exist
     for folder in [grayscale_output_folder, blurred_output_folder, sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder]:
         if not os.path.exists(folder):
@@ -80,14 +105,18 @@ def convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_f
             # Apply edge tracking to connect weak edges to strong edges
             edge_map = edge_tracking(strong_edges, weak_edges)
 
-            # Construct the full path of the output file for edge map
-            edge_map_output_path = os.path.join(
+            # Remove small discontinuous edges
+            filtered_edge_map = remove_small_discontinuous_edges(edge_map)
+
+            # Construct the full path of the output file for filtered edge map
+            filtered_edge_map_output_path = os.path.join(
                 edge_map_output_folder, file_name)
 
-            # Save the edge map
-            Image.fromarray(edge_map.astype(np.uint8)
-                            ).save(edge_map_output_path)
-            print(f"Detected edges and saved as {edge_map_output_path}")
+            # Save the filtered edge map
+            Image.fromarray(filtered_edge_map.astype(np.uint8)
+                            ).save(filtered_edge_map_output_path)
+            print(
+                f"Detected edges and saved as {filtered_edge_map_output_path}")
 
         except Exception as e:
             print(f"Error processing {file_name}: {str(e)}")
@@ -148,23 +177,22 @@ def edge_tracking(strong_edges, weak_edges):
     edge_map = np.zeros_like(strong_edges, dtype=np.uint8)
     edge_map[strong_edges] = 255
 
-    # Define the kernel for edge tracking
+    # Define the 8-connectivity kernel for edge tracking
     kernel = np.array([[1, 1, 1],
                        [1, 0, 1],
                        [1, 1, 1]])
 
-    # Reshape weak_edges to match the shape expected by the convolution operation
-    weak_edges_reshaped = weak_edges.astype(np.float32)
-
-    # Apply edge tracking to connect weak edges to strong edges
-    convolved = np.convolve(weak_edges_reshaped.flatten(),
+    # Apply convolution to check for connectivity with strong edges
+    convolved = np.convolve(weak_edges.flatten(),
                             kernel.flatten(), mode='same')
+
+    # Reshape the convolution result to match the shape of the weak_edges array
     convolved_reshaped = convolved.reshape(weak_edges.shape)
+
+    # Update the edge map to include pixels connected to strong edges
     edge_map[(convolved_reshaped > 0) & strong_edges] = 255
 
     return edge_map
-
-
 
 
 if __name__ == "__main__":
@@ -178,5 +206,5 @@ if __name__ == "__main__":
     pythogorized_output_folder = "pythogorized"
 
     # Convert images to grayscale and detect edges
-    convert_to_grayscale(input_folder, grayscale_output_folder, blurred_output_folder,
-                         sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder)
+    enigma(input_folder, grayscale_output_folder, blurred_output_folder,
+           sobel_x_output_folder, sobel_y_output_folder, edge_map_output_folder, pythogorized_output_folder)

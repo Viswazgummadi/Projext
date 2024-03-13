@@ -1,72 +1,39 @@
 import os
+import cv2
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-# Define the paths to the training and testing data folders
-train_data_dir = 'output_images'
-test_data_dir = 'test'
+# Path to the folder containing the images
+input_folder = 'output_images/'
+output_folder = 'binaried/'
 
-# Define image dimensions and batch size
-img_width, img_height = 150, 150
-batch_size = 32
+# Create the output folder if it doesn't exist
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
-# Define the number of training and testing samples
-num_train_samples = sum([len(files)
-                        for r, d, files in os.walk(train_data_dir)])
-num_test_samples = sum([len(files) for r, d, files in os.walk(test_data_dir)])
+# Threshold value for RGB channels
+threshold_value = 100
 
-# Create data generators for training and testing
-train_datagen = ImageDataGenerator(rescale=1./255)
-test_datagen = ImageDataGenerator(rescale=1./255)
+# Iterate through all files in the folder
+for filename in os.listdir(input_folder):
+    if filename.endswith('.jpg'):
+        # Read the binary image
+        image_path = os.path.join(input_folder, filename)
+        binary_image = cv2.imread(image_path)
 
-train_generator = train_datagen.flow_from_directory(
-    train_data_dir,
-    target_size=(img_width, img_height),
-    batch_size=batch_size,
-    class_mode=None,
-    shuffle=False)
+        # Invert the binary image
+        binary_image = cv2.bitwise_not(binary_image)
 
-test_generator = test_datagen.flow_from_directory(
-    test_data_dir,
-    target_size=(img_width, img_height),
-    batch_size=batch_size,
-    class_mode=None,
-    shuffle=False)
+        # Create masks for pixels greater and lower than the threshold
+        high_intensity_mask = np.all(binary_image > threshold_value, axis=2)
+        low_intensity_mask = np.all(binary_image <= threshold_value, axis=2)
 
-# Build the CNN model
-model = models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu',
-                  input_shape=(img_width, img_height, 3)),
-    layers.MaxPooling2D((2, 2)),
-    layers.Conv2D(64, (3, 3), activation='relu'),
-    layers.MaxPooling2D((2, 2)),
-    layers.Conv2D(128, (3, 3), activation='relu'),
-    layers.MaxPooling2D((2, 2)),
-    layers.Flatten(),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(1, activation='sigmoid')
-])
+        # Set high intensity pixels to a high value
+        result_image = np.zeros_like(binary_image)
+        result_image[high_intensity_mask] = [255, 255, 255]  # High intensity
 
-model.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
+        # Set low intensity pixels to a low value
+        result_image[low_intensity_mask] = [0, 0, 0]  # Low intensity
 
-# Calculate steps_per_epoch
-steps_per_epoch = num_train_samples // batch_size
-
-# Train the model
-model.fit(train_generator, steps_per_epoch=steps_per_epoch, epochs=10)
-
-# Evaluate the model on the test data
-test_loss, test_accuracy = model.evaluate(
-    test_generator, steps=num_test_samples // batch_size)
-print(f'Test Accuracy: {test_accuracy}')
-
-# Use the trained model to predict shirt borders in test images
-predictions = model.predict(test_generator)
-predicted_labels = [1 if pred >= 0.5 else 0 for pred in predictions]
-
-# Print the predicted labels
-print(predicted_labels)
+        # Save the resulting image in the binaried folder
+        output_path = os.path.join(output_folder, f'result_{filename}')
+        cv2.imwrite(output_path, result_image)

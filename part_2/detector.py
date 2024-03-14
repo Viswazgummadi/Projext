@@ -1,39 +1,81 @@
-import os
 import cv2
 import numpy as np
+import os
+import tensorflow as tf
 
-# Path to the folder containing the images
-input_folder = 'output_images/'
-output_folder = 'binaried/'
+# Function to preprocess images
 
-# Create the output folder if it doesn't exist
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
 
-# Threshold value for RGB channels
-threshold_value = 100
+def preprocess_image(image_path):
+    # Read image
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-# Iterate through all files in the folder
-for filename in os.listdir(input_folder):
-    if filename.endswith('.jpg'):
-        # Read the binary image
-        image_path = os.path.join(input_folder, filename)
-        binary_image = cv2.imread(image_path)
+    # Apply Canny edge detection
+    edges = cv2.Canny(image, 100, 200)
 
-        # Invert the binary image
-        binary_image = cv2.bitwise_not(binary_image)
+    # Threshold intensities
+    edges[edges > 100] = 255
+    edges[edges <= 100] = 0
 
-        # Create masks for pixels greater and lower than the threshold
-        high_intensity_mask = np.all(binary_image > threshold_value, axis=2)
-        low_intensity_mask = np.all(binary_image <= threshold_value, axis=2)
+    return edges
 
-        # Set high intensity pixels to a high value
-        result_image = np.zeros_like(binary_image)
-        result_image[high_intensity_mask] = [255, 255, 255]  # High intensity
 
-        # Set low intensity pixels to a low value
-        result_image[low_intensity_mask] = [0, 0, 0]  # Low intensity
+# Load images from 'shirts' folder
+shirts_folder = 'shirts'
+shirts_images = []
+for filename in os.listdir(shirts_folder):
+    if filename.endswith('.jpg') or filename.endswith('.png'):
+        image_path = os.path.join(shirts_folder, filename)
+        preprocessed_image = preprocess_image(image_path)
+        shirts_images.append(preprocessed_image)
 
-        # Save the resulting image in the binaried folder
-        output_path = os.path.join(output_folder, f'result_{filename}')
-        cv2.imwrite(output_path, result_image)
+# Prepare data for training
+X_train = np.array(shirts_images)
+y_train = np.ones((len(shirts_images),), dtype=int)  # All images are shirts
+
+# Define and train a simple CNN model
+model = tf.keras.Sequential([
+    tf.keras.layers.Input(shape=(None, None, 1)),
+    tf.keras.layers.Conv2D(16, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+
+model.fit(X_train, y_train, epochs=10)
+
+# Function to detect shirts in images of people wearing shorts
+
+
+def detect_shirts(image_path):
+    # Read image
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+    # Apply Canny edge detection
+    edges = cv2.Canny(image, 100, 200)
+
+    # Threshold intensities
+    edges[edges > 100] = 255
+    edges[edges <= 100] = 0
+
+    # Make predictions using the trained model
+    prediction = model.predict(np.expand_dims(edges, axis=0))[0]
+
+    # Return the boundary image (edges)
+    return edges
+
+
+# Test the shirt detection function on images from 'ppl_shirts' folder
+ppl_shirts_folder = 'ppl_shirts'
+for filename in os.listdir(ppl_shirts_folder):
+    if filename.endswith('.jpg') or filename.endswith('.png'):
+        image_path = os.path.join(ppl_shirts_folder, filename)
+        boundary_image = detect_shirts(image_path)
+        cv2.imwrite(f"boundary_{filename}", boundary_image)

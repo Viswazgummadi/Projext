@@ -9,6 +9,7 @@ def remove_small_discontinuous_edges(edge_map, min_contour_area=100):
     binary_edge_map = np.uint8(edge_map > 0)
 
     # Find contours in the binary image
+    # Find contours in the binary image
     contours, _ = cv2.findContours(
         binary_edge_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 

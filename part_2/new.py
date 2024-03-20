@@ -66,9 +66,9 @@ def hysteresis_thresholding(image, low_threshold_ratio=0, high_threshold_ratio=0
 
 
 # Path to the folder containing .jpg files
-input_folder = "shirts"
+input_folder = "train"
 # Path to the folder where you want to save the resulting images
-output_folder = "output_images"
+output_folder = "images"
 
 # Create the output folder if it doesn't exist
 os.makedirs(output_folder, exist_ok=True)

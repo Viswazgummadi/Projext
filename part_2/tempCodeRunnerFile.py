@@ -1,0 +1,1 @@
+gray_image = rgb_to_grayscale(image)

@@ -148,3 +148,27 @@ h1 {
   align-items: center; /* Vertically align items */
   margin-bottom: 20px;
 }
+.card-container2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* Styles for card */
+.card2 {
+    width: calc(25% - 10px);
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    box-sizing: border-box; /* Add this property to include padding in width calculation */
+}
+
+/* Styles for second row cards */
+.card-container2 .card2:nth-child(n+5) {
+    width: calc(33.33% - 10px); /* Set width for second row cards */
+}
+

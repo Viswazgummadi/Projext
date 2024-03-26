@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <div class="image-container">
+    <div class="image-container" , id="suggestor">
       <button class="prev" onclick="changeImage(-1)">&#10094;</button>
       <img
         id="image"
@@ -107,7 +107,7 @@
     </div>
 
     <!-- Description of Image Segmentation Section -->
-    <div class="card-container">
+    <div class="card-container" id="encards">
       <div class="card">
         <div class="card-content">
           <h2>Card 1</h2>
@@ -174,34 +174,72 @@
           </p>
         </div>
       </div>
+    </div>
+    <div class="card-container2" id="crew">
+      <!-- First row cards -->
+      <div class="card2">G.Viswaz</div>
+      <div class="card2">K.U1</div>
+      <div class="card2">D.P</div>
+      <div class="card2">Booby</div>
+      <!-- Second row cards -->
+      <div class="card2">BR</div>
+      <div class="card2">Khagesh</div>
+      <div class="card2">Nikhil</div>
     </div>
     <script>
-      // JavaScript functions for image navigation
-      var currentIndex = 0;
-      var imageNames = [
-          {% for image_name in image_names %}
-              "{{ image_name }}",
-          {% endfor %}
-      ];
+            // JavaScript functions for image navigation
+            var currentIndex = 0;
+            var imageNames = [
+                {% for image_name in image_names %}
+                    "{{ image_name }}",
+                {% endfor %}
+            ];
 
-      function changeImage(offset) {
-          currentIndex += offset;
-          if (currentIndex < 0) {
-              currentIndex = imageNames.length - 1;
-          } else if (currentIndex >= imageNames.length) {
-              currentIndex = 0;
-          }
-          var imageElement = document.getElementById("image");
-          imageElement.src = "{{ url_for('static', filename='images/') }}" + imageNames[currentIndex];
-          imageElement.alt = imageNames[currentIndex];
-      }
+            function changeImage(offset) {
+                currentIndex += offset;
+                if (currentIndex < 0) {
+                    currentIndex = imageNames.length - 1;
+                } else if (currentIndex >= imageNames.length) {
+                    currentIndex = 0;
+                }
+                var imageElement = document.getElementById("image");
+                imageElement.src = "{{ url_for('static', filename='images/') }}" + imageNames[currentIndex];
+                imageElement.alt = imageNames[currentIndex];
+            }
 
-      document.addEventListener("keydown", function(event) {
-          if (event.keyCode === 37) {  // Left arrow key
-              changeImage(-1);
-          } else if (event.keyCode === 39) {  // Right arrow key
-              changeImage(1);
+            document.addEventListener("keydown", function(event) {
+                if (event.keyCode === 37) {  // Left arrow key
+                    changeImage(-1);
+                } else if (event.keyCode === 39) {  // Right arrow key
+                    changeImage(1);
+                }
+            });
+            document.addEventListener("DOMContentLoaded", function() {
+        var lastScrollTop = 0;
+
+        window.addEventListener("scroll", function() {
+          var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+          if (currentScroll > lastScrollTop) {
+            // Scrolling down
+            var currentSection = document.querySelector('.fade-in');
+            if (currentSection.nextElementSibling) {
+              currentSection.classList.remove('fade-in');
+              currentSection.classList.add('fade-out');
+              currentSection.nextElementSibling.classList.add('fade-in');
+            }
+          } else {
+            // Scrolling up
+            var currentSection = document.querySelector('.fade-in');
+            if (currentSection.previousElementSibling) {
+              currentSection.classList.remove('fade-in');
+              currentSection.classList.add('fade-out');
+              currentSection.previousElementSibling.classList.add('fade-in');
+            }
           }
+
+          lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        });
       });
     </script>
   </body>

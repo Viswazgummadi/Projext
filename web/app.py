@@ -73,18 +73,30 @@ def cart():
 
 
 # Route to handle image upload and processing
+# Route to handle image upload and processing
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'image' not in request.files:
+        # If no file is uploaded, print a message to the console
+        print("No file uploaded")
         return redirect(request.url)
     file = request.files['image']
     if file.filename == '':
+        # If the filename is empty, return without doing anything
         return redirect(request.url)
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         # Process the uploaded file here (you can call your backend code)
-        return redirect(url_for('sugg'))  # Redirect to sugg.html after upload
+        return redirect('/sugg.html')  # Redirect to sugg.html after upload
+
+# Define a route for /upload that only accepts POST requests
+
+
+@app.route('/upload', methods=['POST'])
+def handle_upload():
+    return "", 200  # Return an empty response with status code 200
+
 
 
 if __name__ == '__main__':

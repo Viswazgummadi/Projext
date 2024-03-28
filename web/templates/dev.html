@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toggle Favorite Example</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/boxicons/2.0.7/css/boxicons.min.css"
+    />
+  </head>
+  <body>
+    <div class="action-icons">
+      <i id="heartIcon" class="bx bx-heart" onclick="toggleFavorite()"></i>
+      <i id="carticon" class="bx bxs-cart" onclick="addToCart()"></i>
+      <i id="shareicon" class="bx bxs-send" onclick="shareImage()"></i>
+    </div>
+    <!-- Add other content here if needed -->
+
+    <script>
+      function toggleFavorite() {
+        var heartIcon = document.getElementById("heartIcon"); // Get the heart icon
+        if (heartIcon.classList.contains("bx-heart")) {
+          heartIcon.classList.remove("bx-heart");
+          heartIcon.classList.add("bxs-heart");
+        } else {
+          heartIcon.classList.remove("bxs-heart");
+          heartIcon.classList.add("bx-heart");
+        }
+      }
+    </script>
+  </body>
+</html>

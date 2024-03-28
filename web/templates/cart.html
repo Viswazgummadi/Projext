@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enigma</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/boxicons/2.0.7/css/boxicons.min.css"
+    />
+  </head>
+  <body>
+    <div class="header-container">
+      <!-- Logo and name -->
+      <div class="logo-name">
+        <img
+          id="logo"
+          src="{{ url_for('static', filename='assets/9032132.png') }}"
+          alt="logo"
+        />
+        <h1>Enigma</h1>
+      </div>
+
+      <!-- Icons -->
+      <div class="header-icons">
+        <!-- Icon with tooltip for Favorites -->
+        <div class="tooltip">
+          <a href="/"><i class="bx bx-home-smile"></i></a>
+          <span class="tooltiptext">home</span>
+        </div>
+
+        <div class="tooltip">
+          <a href="sugg.html"><i class="bx bx-images"></i></a>
+          <span class="tooltiptext">home</span>
+        </div>
+
+        <div class="tooltip">
+          <a href="favs.html"><i class="bx bx-book-heart"></i></a>
+          <span class="tooltiptext">Favorites</span>
+        </div>
+
+        <!-- Icon with tooltip for Cart -->
+        <div class="tooltip">
+          <a href="cart.html"><i class="bx bxs-shopping-bag"></i></a>
+          <span class="tooltiptext">Cart</span>
+        </div>
+
+        <!-- Icon with tooltip for Work -->
+        <div class="tooltip">
+          <a href="work.html"><i class="bx bxs-network-chart"></i></a>
+          <span class="tooltiptext">Work</span>
+        </div>
+
+        <!-- Icon with tooltip for Crew -->
+        <div class="tooltip">
+          <a href="crew.html"><i class="bx bxs-id-card"></i></a>
+          <span class="tooltiptext">Crew</span>
+        </div>
+
+        <div class="tooltip">
+          <a href="dev.html"><i class="bx bxl-dev-to"></i></a>
+          <span class="tooltiptext">Dev</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="image-container" id="suggestor">
+      <button class="prev" onclick="changeImage(-1)">&#10094;</button>
+      <div class="image-wrapper">
+        <img
+          id="image"
+          src="{{ url_for('static', filename='images/' + image_names[0]) }}"
+          alt="{{ image_names[0] }}"
+        />
+      </div>
+      <div class="action-icons">
+        <i id="heartIcon" class="bx bx-heart" onclick="toggleFavorite()"></i>
+        <i class="bx bxs-cart" onclick="addtocart()"></i>
+        <i class="bx bxs-send" onclick="shareImage()"></i>
+      </div>
+      <button class="next" onclick="changeImage(1)">&#10095;</button>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          // JavaScript functions for image navigation
+          var currentIndex = 0;
+          var imageNames = [
+              {% for image_name in image_names %}
+              "{{ image_name }}",
+              {% endfor %}
+          ];
+
+          function changeImage(offset) {
+              currentIndex += offset;
+              if (currentIndex < 0) {
+                  currentIndex = imageNames.length - 1;
+              } else if (currentIndex >= imageNames.length) {
+                  currentIndex = 0;
+              }
+              var imageElement = document.getElementById("image");
+              imageElement.src = "{{ url_for('static', filename='images/') }}" + imageNames[currentIndex];
+              imageElement.alt = imageNames[currentIndex];
+          }
+
+          document.addEventListener("keydown", function (event) {
+              if (event.keyCode === 37 || event.keyCode === 38) {  // Left arrow key or Up arrow key
+                  changeImage(-1);
+              } else if (event.keyCode === 39 || event.keyCode === 40) {  // Right arrow key or Down arrow key
+                  changeImage(1);
+              }
+          });
+
+          // Function to toggle favorite
+          function toggleFavorite() {
+              var heartIcon = document.getElementById('heartIcon');
+              var imageSrc = document.getElementById('image').src;
+
+              if (heartIcon.classList.contains('bxs-heart')) {
+                  // Remove from favorites (bxs-heart -> bx-heart)
+                  heartIcon.classList.remove('bxs-heart');
+                  heartIcon.classList.add('bx-heart');
+                  removeFromFavorites(imageSrc);
+              } else {
+                  // Add to favorites (bx-heart -> bxs-heart)
+                  heartIcon.classList.remove('bx-heart');
+                  heartIcon.classList.add('bxs-heart');
+                  addToFavorites(imageSrc);
+              }
+          }
+
+          function addToFavorites(imageSrc) {
+              // Send an AJAX request to add the image to fav.csv
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/add-to-favorites', true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.onreadystatechange = function () {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                      console.log('Image added to favorites.');
+                  }
+              };
+              xhr.send(JSON.stringify({ imageSrc: imageSrc }));
+          }
+
+          function removeFromFavorites(imageSrc) {
+              // Send an AJAX request to remove the image from fav.csv
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/remove-from-favorites', true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.onreadystatechange = function () {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                      console.log('Image removed from favorites.');
+                  }
+              };
+              xhr.send(JSON.stringify({ imageSrc: imageSrc }));
+          }
+      });
+    </script>
+  </body>
+</html>

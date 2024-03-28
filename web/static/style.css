@@ -16,33 +16,35 @@ h1 {
   max-width: 600px;
 }
 .image-container {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto;
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .image-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .image-wrapper img {
-    max-width: 100%;
-    max-height: 80vh;
-    border-radius: 13px;
+  max-width: 100%;
+  max-height: 75vh;
+  border-radius: 13px;
 }
 
 .action-icons {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
+  position: absolute;
+  padding-top: 20px; /* Adjusted padding */
+  bottom: 20px; /* Adjusted bottom spacing */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center; /* Center the icons horizontally */
+  gap: 10px; /* Reduced gap between icons */
 }
 
 .action-icons i {
-    font-size: 24px;
-    cursor: pointer;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .prev,
@@ -173,27 +175,27 @@ h1 {
   margin-bottom: 20px;
 }
 .card-container2 {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px;
 }
 
 /* Styles for card */
 .card2 {
-    width: calc(25% - 10px);
-    margin-bottom: 20px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    box-sizing: border-box; /* Add this property to include padding in width calculation */
+  width: calc(25% - 10px);
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  box-sizing: border-box; /* Add this property to include padding in width calculation */
 }
 
 /* Styles for second row cards */
-.card-container2 .card2:nth-child(n+5) {
-    width: calc(33.33% - 10px); /* Set width for second row cards */
+.card-container2 .card2:nth-child(n + 5) {
+  width: calc(33.33% - 10px); /* Set width for second row cards */
 }
 
 #image-upload {

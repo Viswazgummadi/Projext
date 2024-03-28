@@ -1,3 +1,7 @@
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -33,11 +37,6 @@
       <div class="header-icons">
         <!-- Icon with tooltip for Favorites -->
         <div class="tooltip">
-          <a href="/"><i class="bx bx-home-smile"></i></a>
-          <span class="tooltiptext">Favorites</span>
-        </div>
-
-        <div class="tooltip">
           <a href="favs.html"><i class="bx bx-book-heart"></i></a>
           <span class="tooltiptext">Favorites</span>
         </div>
@@ -61,125 +60,8 @@
         </div>
       </div>
     </div>
-    <!-- Image Upload Section -->
-    <div class="section" id="image-upload">
-      <h2 class="section-heading">Upload Image</h2>
-      <form
-        id="upload-form"
-        action="/upload"
-        method="post"
-        enctype="multipart/form-data"
-      >
-        <input
-          type="file"
-          name="image"
-          id="file-input"
-          accept="image/*"
-          style="display: none"
-        />
-        <label for="file-input" id="file-label">Choose Image</label>
-        <div
-          id="drop-area"
-          style="
-            padding-top: 10%;
-            padding-bottom: 10%;
-            margin-left: 4%;
-            margin-right: 4%;
-            border-color: navy;
-          "
-        >
-          <p>Or drag and drop an image here</p>
-        </div>
-        <button type="submit" style="margin-bottom: 30px">Upload</button>
-      </form>
-    </div>
-
-    <div class="image-container" id="suggestor">
-      <button class="prev" onclick="changeImage(-1)">&#10094;</button>
-      <div class="image-wrapper">
-        <img
-          id="image"
-          src="{{ url_for('static', filename='images/' + image_names[0]) }}"
-          alt="{{ image_names[0] }}"
-        />
-        <div class="action-icons">
-          <i id="heartIcon" class="bx bx-heart" onclick="toggleFavorite()"></i>
-          <i class="bx bxs-cart" onclick="addtocart()"></i>
-          <i class="bx bxs-send" onclick="shareImage()"></i>
-        </div>
-      </div>
-      <button class="next" onclick="changeImage(1)">&#10095;</button>
-    </div>
-
     <!-- Description of Image Segmentation Section -->
-    <div class="card-container" id="encards">
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 1</h2>
-          <p>
-            This is the description for Card 1. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua.
-          </p>
-        </div>
-      </div>
 
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 2</h2>
-          <p>
-            This is the description for Card 2. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 3</h2>
-          <p>
-            This is the description for Card 3. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="card-container">
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 1</h2>
-          <p>
-            This is the description for Card 1. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 2</h2>
-          <p>
-            This is the description for Card 2. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 3</h2>
-          <p>
-            This is the description for Card 3. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
-          </p>
-        </div>
-      </div>
-    </div>
     <div class="card-container2" id="crew">
       <!-- First row cards -->
       <div class="card2">G.Viswaz</div>

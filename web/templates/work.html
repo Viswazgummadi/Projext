@@ -75,33 +75,35 @@
     <div class="card-container" id="encards">
       <div class="card">
         <div class="card-content">
-          <h2>Card 1</h2>
+          <h2>Image Processing</h2>
           <p>
-            This is the description for Card 1. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua.
+            Utilize Canny Edge Detection, Thresholding, and Color Gradient
+            techniques to identify the shirt within the image. Apply contour
+            detection to isolate the shirt region. Generate an output image
+            highlighting or mostly showing only the shirt area.
           </p>
         </div>
       </div>
 
       <div class="card">
         <div class="card-content">
-          <h2>Card 2</h2>
+          <h2>K-Means Clustering</h2>
           <p>
-            This is the description for Card 2. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
+            Perform K-Means clustering on the shirt region identified in part 1
+            to extract dominant colors. Retrieve the top three dominant colors
+            present in the shirt.
           </p>
         </div>
       </div>
 
       <div class="card">
         <div class="card-content">
-          <h2>Card 3</h2>
+          <h2>Gender Classification</h2>
           <p>
-            This is the description for Card 3. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
+            Integrate a gender classification model to determine the gender of
+            the person wearing the shirt. Utilize the output from Image
+            Processing as input to the gender classification model. Output 0 for
+            male and 1 for female gender classification.
           </p>
         </div>
       </div>
@@ -109,33 +111,33 @@
     <div class="card-container">
       <div class="card">
         <div class="card-content">
-          <h2>Card 1</h2>
+          <h2>Random Ratings Generation</h2>
           <p>
-            This is the description for Card 1. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua.
+            Generate random ratings for the recommended shirts. Assign these
+            ratings to the suggested shirts to simulate user feedback.
           </p>
         </div>
       </div>
 
       <div class="card">
         <div class="card-content">
-          <h2>Card 2</h2>
+          <h2>(Color,rating)--->Recommendation</h2>
           <p>
-            This is the description for Card 2. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
+            A classifier trained on a dataset to recommend shirts based on their
+            colors. From top three dominant colors in K-Means Clustering as
+            features. Query the classifier to suggest nearest colored shirts
+            based on gender.
           </p>
         </div>
       </div>
 
       <div class="card">
         <div class="card-content">
-          <h2>Card 3</h2>
+          <h2>Flask Backend Implementation</h2>
           <p>
-            This is the description for Card 3. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
+            Integrating the entire process into a Flask backend application.
+            Host the application locally to serve recommendations based on the
+            input image. Display the suggestions along with the random ratings
           </p>
         </div>
       </div>

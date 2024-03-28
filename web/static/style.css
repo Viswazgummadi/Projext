@@ -245,3 +245,44 @@ h1 {
 #upload-form button:hover {
   background-color: #27ae60;
 }
+* {
+  cursor: none;
+}
+
+.circle {
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border-radius: 24px;
+  background-color: #00acf0;
+}
+.inner-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  background-color: #00abf0;
+  mix-blend-mode: normal;
+  border-radius: 50%;
+  transition: width 0.5s, height 0.5s;
+}
+
+.inner-cursor.grow {
+  width: 30px;
+  height: 30px;
+  transition: width 0.5s, height 0.5s;
+}
+
+.outer-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 25px;
+  height: 25px;
+  transform: translate(-50%, -50%);
+  border: transparent;
+  mix-blend-mode: normal;
+  border-radius: 50%;
+}

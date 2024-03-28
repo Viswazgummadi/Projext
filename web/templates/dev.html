@@ -6,7 +6,7 @@
     <title>Toggle Favorite Example</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+      href="{{ url_for('static', filename='styles.css') }}"
     />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -18,24 +18,115 @@
     />
   </head>
   <body>
-    <div class="action-icons">
-      <i id="heartIcon" class="bx bx-heart" onclick="toggleFavorite()"></i>
-      <i id="carticon" class="bx bxs-cart" onclick="addToCart()"></i>
-      <i id="shareicon" class="bx bxs-send" onclick="shareImage()"></i>
+    <div class="media-icons">
+      <a href="mailto:viswazgummadi@gmail.com" target="_blank"
+        ><i class="bx bxl-gmail"></i
+      ></a>
+      <a href="https://github.com/Viswazgummadi" target="_blank"
+        ><i class="bx bxl-github"></i
+      ></a>
+      <a href="https://www.instagram.com/viswaz_gummadi/" target="_blank"
+        ><i class="bx bxl-instagram"></i
+      ></a>
+      <a
+        href="https://www.linkedin.com/in/viswaz-gummadi-4ba739258/"
+        target="_blank"
+        ><i class="bx bxl-linkedin"></i
+      ></a>
+      <a href="https://twitter.com/viswaz_091" target="_blank"
+        ><i class="bx bxl-twitter"></i
+      ></a>
     </div>
-    <!-- Add other content here if needed -->
 
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="inner-cursor"></div>
+    <div class="outer-cursor"></div>
     <script>
-      function toggleFavorite() {
-        var heartIcon = document.getElementById("heartIcon"); // Get the heart icon
-        if (heartIcon.classList.contains("bx-heart")) {
-          heartIcon.classList.remove("bx-heart");
-          heartIcon.classList.add("bxs-heart");
-        } else {
-          heartIcon.classList.remove("bxs-heart");
-          heartIcon.classList.add("bx-heart");
-        }
+      // Get the inner and outer cursors
+      let innerCursor = document.querySelector(".inner-cursor");
+      let outerCursor = document.querySelector(".outer-cursor");
+
+      // Update the cursor position on mouse move
+      document.addEventListener("mousemove", mouseCursor);
+
+      function mouseCursor(e) {
+        let x = e.clientX;
+        let y = e.clientY;
+
+        // Update the position of the cursors
+        innerCursor.style.left = `${x}px`;
+        innerCursor.style.top = `${y}px`;
+        outerCursor.style.left = `${x}px`;
+        outerCursor.style.top = `${y}px`;
+
+        // Increase the size of the inner cursor on hover
+        let links = Array.from(document.querySelectorAll("a"));
+        links.forEach((link) => {
+          link.addEventListener("mouseover", () => {
+            innerCursor.classList.add("grow");
+          });
+          link.addEventListener("mouseleave", () => {
+            innerCursor.classList.remove("grow");
+          });
+        });
       }
+
+      // Get the circles and set initial coordinates
+      const coords = { x: 0, y: 0 };
+      const circles = document.querySelectorAll(".circle");
+
+      circles.forEach(function (circle) {
+        circle.x = 0;
+        circle.y = 0;
+      });
+
+      // Update the coordinates on mouse move
+      window.addEventListener("mousemove", function (e) {
+        coords.x = e.clientX;
+        coords.y = e.clientY;
+      });
+
+      // Animate the circles
+      function animateCircles() {
+        let x = coords.x;
+        let y = coords.y;
+
+        circles.forEach(function (circle, index) {
+          // Update the position and size of the circle
+          circle.style.left = x - circle.offsetWidth / 2 + "px";
+          circle.style.top = y - circle.offsetHeight / 2 + "px";
+          circle.style.transform = `scale(${
+            (circles.length - index) / circles.length
+          })`;
+
+          circle.x = x;
+          circle.y = y;
+
+          // Update the next circle's position
+          const nextCircle = circles[index + 1] || circles[0];
+          x += (nextCircle.x - x) * 0.12;
+          y += (nextCircle.y - y) * 0.12;
+        });
+
+        requestAnimationFrame(animateCircles);
+      }
+
+      animateCircles();
+      const menuBtn = document.querySelector(".menu-btn");
+      const navigation = document.querySelector(".navigation");
+
+      menuBtn.addEventListener("click", () => {
+        menuBtn.classList.toggle("active");
+        navigation.classList.toggle("active");
+      });
     </script>
   </body>
 </html>

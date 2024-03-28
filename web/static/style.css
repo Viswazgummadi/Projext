@@ -1,3 +1,9 @@
+* {
+  cursor: none;
+}
+a {
+  cursor: none;
+}
 body {
   background-color: lightblue;
   font-family: Arial, sans-serif;
@@ -44,7 +50,6 @@ h1 {
 
 .action-icons i {
   font-size: 24px;
-  cursor: pointer;
 }
 
 .prev,
@@ -52,7 +57,6 @@ h1 {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  cursor: pointer;
   font-size: 24px;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.5);
@@ -138,7 +142,6 @@ h1 {
   color: black; /* Use the default text color */
   text-decoration: none; /* Remove underline */
   font-size: 30px;
-  cursor: pointer;
 }
 
 /* Styles for tooltips */
@@ -208,7 +211,6 @@ h1 {
 
 #file-label {
   display: inline-block;
-  cursor: pointer;
   background-color: #3498db;
   color: #fff;
   padding: 10px 20px;
@@ -238,15 +240,11 @@ h1 {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 #upload-form button:hover {
   background-color: #27ae60;
-}
-* {
-  cursor: none;
 }
 
 .circle {

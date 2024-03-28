@@ -45,7 +45,7 @@ def work():
     # Get the path to the images directory
     images_dir = os.path.join(app.root_path, 'images')
 
-    return render_template('work.html', image_names=image_names, images_dir=images_dir)@app.route('/favs.html')
+    return render_template('work.html', image_names=image_names, images_dir=images_dir)
 
 
 @app.route('/crew.html')
@@ -74,6 +74,8 @@ def cart():
     images_dir = os.path.join(app.root_path, 'images')
 
     return render_template('cart.html', image_names=image_names, images_dir=images_dir)
+
+
 @app.route('/addToFavorites', methods=['POST'])
 def add_to_favorites():
     image = request.json['image']

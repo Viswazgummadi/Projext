@@ -63,7 +63,6 @@ h1 {
   border: none;
   border-radius: 20px;
   outline: none;
-  z-index: 1;
 }
 .prev {
   left: 10px;
@@ -159,7 +158,6 @@ h1 {
   border-radius: 6px;
   padding: 5px;
   position: absolute;
-  z-index: 1;
   top: -30px;
   left: 50%;
   transform: translateX(-50%);
@@ -254,6 +252,7 @@ h1 {
   border-radius: 24px;
   background-color: #00acf0;
 }
+
 .inner-cursor {
   position: absolute;
   left: 0;

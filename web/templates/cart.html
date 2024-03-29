@@ -16,6 +16,54 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/boxicons/2.0.7/css/boxicons.min.css"
     />
+    <style>
+      .image-wrapper {
+        display: none;
+        position: relative;
+      }
+
+      .image-wrapper.active {
+        display: block;
+      }
+
+      .image-container {
+        position: relative;
+      }
+
+      .prev,
+      .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        font-size: 24px;
+      }
+
+      .prev {
+        left: 0;
+      }
+
+      .next {
+        right: 0;
+      }
+
+      .action-icons {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+      }
+
+      .action-icons > * {
+        margin-right: 10px;
+        font-size: 24px;
+      }
+
+      .action-icons > .like-btn {
+        margin-right: 5px;
+      }
+    </style>
   </head>
   <body>
     <div class="circle"></div>
@@ -45,12 +93,12 @@
         <!-- Icon with tooltip for Favorites -->
         <div class="tooltip">
           <a href="/"><i class="bx bx-home-smile"></i></a>
-          <span class="tooltiptext">home</span>
+          <span class="tooltiptext">Home</span>
         </div>
 
         <div class="tooltip">
           <a href="sugg.html"><i class="bx bx-images"></i></a>
-          <span class="tooltiptext">home</span>
+          <span class="tooltiptext">Suggestions</span>
         </div>
 
         <div class="tooltip">
@@ -60,7 +108,7 @@
 
         <!-- Icon with tooltip for Cart -->
         <div class="tooltip">
-          <a href="cart.html"><i class="bx bxs-shopping-bag"></i></a>
+          <a href="cart.html"><i class="bx bxs-cart"></i></a>
           <span class="tooltiptext">Cart</span>
         </div>
 
@@ -82,44 +130,99 @@
         </div>
       </div>
     </div>
-
     <div class="image-container" id="suggestor">
       <button class="prev" onclick="changeImage(-1)">&#10094;</button>
-      <div class="image-wrapper">
-        <img
-          id="image"
-          src="{{ url_for('static', filename='images/' + image_names[0]) }}"
-          alt="{{ image_names[0] }}"
-        />
-      </div>
-      <div class="action-icons">
-        <i id="heartIcon" class="bx bx-heart" onclick="toggleFavorite()"></i>
-        <i class="bx bxs-cart" onclick="addtocart()"></i>
-        <i class="bx bxs-send" onclick="shareImage()"></i>
-      </div>
       <button class="next" onclick="changeImage(1)">&#10095;</button>
+      {% for image_name in image_names %}
+      <div class="image-wrapper" id="image{{ loop.index0 }}">
+        <img
+          src="{{ url_for('static', filename='images/' + image_name) }}"
+          alt="{{ image_name }}"
+        />
+        <div class="action-icons">
+          <span class="like-btn" onclick="toggleFavorite({{ loop.index0 }})">
+            <i id="heartIcon{{ loop.index0 }}" class="bx bx-heart"></i>
+          </span>
+          <i class="bx bxs-cart" onclick="addToCart()"></i>
+          <i class="bx bxs-send" onclick="shareImage()"></i>
+        </div>
+      </div>
+      {% endfor %}
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-          // JavaScript functions for image navigation
           var currentIndex = 0;
-          var imageNames = [
-              {% for image_name in image_names %}
-              "{{ image_name }}",
-              {% endfor %}
-          ];
+          var imageWrappers = document.querySelectorAll('.image-wrapper');
+          var likeStatus = new Array({{ image_names|length }}).fill(false);
+
+          // Check if an image is in favorites list
+          function checkFavorite(imageSrc) {
+              var xhr = new XMLHttpRequest();
+              xhr.open("GET", "/check-favorite?imageSrc=" + encodeURIComponent(imageSrc), true);
+              xhr.onreadystatechange = function () {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                      var response = JSON.parse(xhr.responseText);
+                      if (response.isFavorite) {
+                          // Image is in favorites list, update likeStatus array and heart icon
+                          var index = Array.from(imageWrappers).findIndex(function(wrapper) {
+                              return wrapper.querySelector('img').getAttribute('src') === imageSrc;
+                          });
+                          if (index !== -1) {
+                              likeStatus[index] = true;
+                              var heartIcon = document.getElementById("heartIcon" + index);
+                              heartIcon.classList.remove("bx-heart");
+                              heartIcon.classList.add("bxs-heart");
+                          }
+                      }
+                  }
+              };
+              xhr.send();
+          }
+
+          // Check if each image is in favorites list when the page loads
+          imageWrappers.forEach(function(wrapper) {
+              var imageSrc = wrapper.querySelector('img').getAttribute('src');
+              checkFavorite(imageSrc);
+          });
+
+          function toggleFavorite(index) {
+              var heartIcon = document.getElementById("heartIcon" + index);
+              likeStatus[index] = !likeStatus[index];
+
+              // Send AJAX request to toggle favorite status
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", "/toggle-favorite", true);
+              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              xhr.onreadystatechange = function () {
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                      var response = JSON.parse(xhr.responseText);
+                      if (response.success) {
+                          // Update heart icon based on favorite status
+                          if (likeStatus[index]) {
+                              heartIcon.classList.remove("bx-heart");
+                              heartIcon.classList.add("bxs-heart");
+                          } else {
+                              heartIcon.classList.remove("bxs-heart");
+                              heartIcon.classList.add("bx-heart");
+                          }
+                      } else {
+                          // Handle error
+                          console.error("Failed to toggle favorite status");
+                      }
+                  }
+              };
+              xhr.send("imageSrc=" + encodeURIComponent(imageWrappers[index].querySelector('img').getAttribute('src')));
+          }
 
           function changeImage(offset) {
+              imageWrappers[currentIndex].classList.remove('active');
               currentIndex += offset;
               if (currentIndex < 0) {
-                  currentIndex = imageNames.length - 1;
-              } else if (currentIndex >= imageNames.length) {
+                  currentIndex = imageWrappers.length - 1;
+              } else if (currentIndex >= imageWrappers.length) {
                   currentIndex = 0;
               }
-              var imageElement = document.getElementById("image");
-              imageElement.src = "{{ url_for('static', filename='images/') }}" + imageNames[currentIndex];
-              imageElement.alt = imageNames[currentIndex];
+              imageWrappers[currentIndex].classList.add('active');
           }
 
           document.addEventListener("keydown", function (event) {
@@ -130,127 +233,103 @@
               }
           });
 
-          // Function to toggle favorite
-          function toggleFavorite() {
-              var heartIcon = document.getElementById('heartIcon');
-              var imageSrc = document.getElementById('image').src;
+          // Initialize first image as active
+          imageWrappers[currentIndex].classList.add('active');
+          // Get the inner and outer cursors
+          let innerCursor = document.querySelector(".inner-cursor");
+          let outerCursor = document.querySelector(".outer-cursor");
 
-              if (heartIcon.classList.contains('bxs-heart')) {
-                  // Remove from favorites (bxs-heart -> bx-heart)
-                  heartIcon.classList.remove('bxs-heart');
-                  heartIcon.classList.add('bx-heart');
-                  removeFromFavorites(imageSrc);
-              } else {
-                  // Add to favorites (bx-heart -> bxs-heart)
-                  heartIcon.classList.remove('bx-heart');
-                  heartIcon.classList.add('bxs-heart');
-                  addToFavorites(imageSrc);
-              }
+          // Update the cursor position on mouse move
+          document.addEventListener("mousemove", mouseCursor);
+
+          function mouseCursor(e) {
+            let x = e.clientX;
+            let y = e.clientY;
+
+            // Update the position of the cursors
+            innerCursor.style.left = `${x}px`;
+            innerCursor.style.top = `${y}px`;
+            outerCursor.style.left = `${x}px`;
+            outerCursor.style.top = `${y}px`;
+
+            // Increase the size of the inner cursor on hover
+            let links = Array.from(document.querySelectorAll("a"));
+            links.forEach((link) => {
+              link.addEventListener("mouseover", () => {
+                innerCursor.classList.add("grow");
+              });
+              link.addEventListener("mouseleave", () => {
+                innerCursor.classList.remove("grow");
+              });
+            });
           }
 
-          function addToFavorites(imageSrc) {
-              // Send an AJAX request to add the image to fav.csv
-              var xhr = new XMLHttpRequest();
-              xhr.open('POST', '/add-to-favorites', true);
-              xhr.setRequestHeader('Content-Type', 'application/json');
-              xhr.onreadystatechange = function () {
-                  if (xhr.readyState === 4 && xhr.status === 200) {
-                      console.log('Image added to favorites.');
-                  }
-              };
-              xhr.send(JSON.stringify({ imageSrc: imageSrc }));
-          }
+          // Get the circles and set initial coordinates
+          const coords = { x: 0, y: 0 };
+          const circles = document.querySelectorAll(".circle");
 
-          function removeFromFavorites(imageSrc) {
-              // Send an AJAX request to remove the image from fav.csv
-              var xhr = new XMLHttpRequest();
-              xhr.open('POST', '/remove-from-favorites', true);
-              xhr.setRequestHeader('Content-Type', 'application/json');
-              xhr.onreadystatechange = function () {
-                  if (xhr.readyState === 4 && xhr.status === 200) {
-                      console.log('Image removed from favorites.');
-                  }
-              };
-              xhr.send(JSON.stringify({ imageSrc: imageSrc }));
-          }
-      });
-      // Get the inner and outer cursors
-      let innerCursor = document.querySelector(".inner-cursor");
-      let outerCursor = document.querySelector(".outer-cursor");
-
-      // Update the cursor position on mouse move
-      document.addEventListener("mousemove", mouseCursor);
-
-      function mouseCursor(e) {
-        let x = e.clientX;
-        let y = e.clientY;
-
-        // Update the position of the cursors
-        innerCursor.style.left = `${x}px`;
-        innerCursor.style.top = `${y}px`;
-        outerCursor.style.left = `${x}px`;
-        outerCursor.style.top = `${y}px`;
-
-        // Increase the size of the inner cursor on hover
-        let links = Array.from(document.querySelectorAll("a"));
-        links.forEach((link) => {
-          link.addEventListener("mouseover", () => {
-            innerCursor.classList.add("grow");
+          circles.forEach(function (circle) {
+            circle.x = 0;
+            circle.y = 0;
           });
-          link.addEventListener("mouseleave", () => {
-            innerCursor.classList.remove("grow");
+
+          // Update the coordinates on mouse move
+          window.addEventListener("mousemove", function (e) {
+            coords.x = e.clientX;
+            coords.y = e.clientY;
           });
-        });
+
+          // Animate the circles
+          function animateCircles() {
+            let x = coords.x;
+            let y = coords.y;
+
+            circles.forEach(function (circle, index) {
+              // Update the position and size of the circle
+              circle.style.left = x - circle.offsetWidth / 2 + "px";
+              circle.style.top = y - circle.offsetHeight / 2 + "px";
+              circle.style.transform = `scale(${
+                (circles.length - index) / circles.length
+              })`;
+
+              circle.x = x;
+              circle.y = y;
+
+              // Update the next circle's position
+              const nextCircle = circles[index + 1] || circles[0];
+              x += (nextCircle.x - x) * 0.12;
+              y += (nextCircle.y - y) * 0.12;
+            });
+
+            requestAnimationFrame(animateCircles);
+          }
+
+          animateCircles();
+          const menuBtn = document.querySelector(".menu-btn");
+          const navigation = document.querySelector(".navigation");
+
+          menuBtn.addEventListener("click", () => {
+            menuBtn.classList.toggle("active");
+            navigation.classList.toggle("active");
+          });
+          function shareImage() {
+        // Get the URL of the current image
+        var imageUrl = document.querySelector('.image-wrapper.active img').getAttribute('src');
+
+        // Check if the navigator.share API is available
+        if (navigator.share) {
+          navigator.share({
+            title: 'Share Image',
+            text: 'Check out this image!',
+            url: imageUrl
+          })
+          .then(() => console.log('Shared successfully'))
+          .catch((error) => console.error('Error sharing:', error));
+        } else {
+          // Fallback behavior if navigator.share is not available
+          alert('Sharing is not supported in this browser.');
+        }
       }
-
-      // Get the circles and set initial coordinates
-      const coords = { x: 0, y: 0 };
-      const circles = document.querySelectorAll(".circle");
-
-      circles.forEach(function (circle) {
-        circle.x = 0;
-        circle.y = 0;
-      });
-
-      // Update the coordinates on mouse move
-      window.addEventListener("mousemove", function (e) {
-        coords.x = e.clientX;
-        coords.y = e.clientY;
-      });
-
-      // Animate the circles
-      function animateCircles() {
-        let x = coords.x;
-        let y = coords.y;
-
-        circles.forEach(function (circle, index) {
-          // Update the position and size of the circle
-          circle.style.left = x - circle.offsetWidth / 2 + "px";
-          circle.style.top = y - circle.offsetHeight / 2 + "px";
-          circle.style.transform = `scale(${
-            (circles.length - index) / circles.length
-          })`;
-
-          circle.x = x;
-          circle.y = y;
-
-          // Update the next circle's position
-          const nextCircle = circles[index + 1] || circles[0];
-          x += (nextCircle.x - x) * 0.12;
-          y += (nextCircle.y - y) * 0.12;
-        });
-
-        requestAnimationFrame(animateCircles);
-      }
-
-      animateCircles();
-      const menuBtn = document.querySelector(".menu-btn");
-      const navigation = document.querySelector(".navigation");
-
-      menuBtn.addEventListener("click", () => {
-        menuBtn.classList.toggle("active");
-        navigation.classList.toggle("active");
-      });
     </script>
   </body>
 </html>

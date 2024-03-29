@@ -18,6 +18,17 @@
     />
   </head>
   <body>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="inner-cursor"></div>
+    <div class="outer-cursor"></div>
     <div class="header-container">
       <!-- Logo and name -->
       <div class="logo-name">
@@ -33,7 +44,17 @@
       <div class="header-icons">
         <!-- Icon with tooltip for Favorites -->
         <div class="tooltip">
-          <a href="fav.html"><i class="bx bx-book-heart"></i></a>
+          <a href="/"><i class="bx bx-home-smile"></i></a>
+          <span class="tooltiptext">home</span>
+        </div>
+
+        <div class="tooltip">
+          <a href="sugg.html"><i class="bx bx-images"></i></a>
+          <span class="tooltiptext">Suggestions</span>
+        </div>
+
+        <div class="tooltip">
+          <a href="favs.html"><i class="bx bx-book-heart"></i></a>
           <span class="tooltiptext">Favorites</span>
         </div>
 
@@ -45,14 +66,19 @@
 
         <!-- Icon with tooltip for Work -->
         <div class="tooltip">
-          <a href="#description"><i class="bx bxs-network-chart"></i></a>
+          <a href="work.html"><i class="bx bxs-network-chart"></i></a>
           <span class="tooltiptext">Work</span>
         </div>
 
         <!-- Icon with tooltip for Crew -->
         <div class="tooltip">
-          <a href="#crew"><i class='bx bxs-id-card' ></i></a>
+          <a href="crew.html"><i class="bx bxs-id-card"></i></a>
           <span class="tooltiptext">Crew</span>
+        </div>
+
+        <div class="tooltip">
+          <a href="dev.html"><i class="bx bxl-dev-to"></i></a>
+          <span class="tooltiptext">Dev</span>
         </div>
       </div>
     </div>
@@ -88,274 +114,122 @@
         <button type="submit" style="margin-bottom: 30px">Upload</button>
       </form>
     </div>
-
-    <div class="image-container" id="suggestor">
-      <button class="prev" onclick="changeImage(-1)">&#10094;</button>
-      <div class="image-wrapper">
-        <img
-          id="image"
-          src="{{ url_for('static', filename='images/' + image_names[0]) }}"
-          alt="{{ image_names[0] }}"
-        />
-        <div class="action-icons">
-          <i id="heartIcon" class="bx bx-heart" onclick="toggleFavorite()"></i>
-          <i class="bx bxs-cart" onclick="addtocart()"></i>
-          <i class="bx bxs-send" onclick="shareImage()"></i>
-        </div>
-      </div>
-      <button class="next" onclick="changeImage(1)">&#10095;</button>
-    </div>
-
-    <!-- Description of Image Segmentation Section -->
-    <div class="card-container" id="encards">
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 1</h2>
-          <p>
-            This is the description for Card 1. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 2</h2>
-          <p>
-            This is the description for Card 2. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 3</h2>
-          <p>
-            This is the description for Card 3. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="card-container">
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 1</h2>
-          <p>
-            This is the description for Card 1. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 2</h2>
-          <p>
-            This is the description for Card 2. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
-          </p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-content">
-          <h2>Card 3</h2>
-          <p>
-            This is the description for Card 3. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="card-container2" id="crew">
-      <!-- First row cards -->
-      <div class="card2">G.Viswaz</div>
-      <div class="card2">K.U1</div>
-      <div class="card2">D.P</div>
-      <div class="card2">Booby</div>
-      <!-- Second row cards -->
-      <div class="card2">BR</div>
-      <div class="card2">Khagesh</div>
-      <div class="card2">Nikhil</div>
-    </div>
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          var dropArea = document.getElementById('drop-area');
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get the inner and outer cursors
+        let innerCursor = document.querySelector(".inner-cursor");
+        let outerCursor = document.querySelector(".outer-cursor");
 
-          // Prevent default drag behaviors
-          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-              dropArea.addEventListener(eventName, preventDefaults, false);
-              document.body.addEventListener(eventName, preventDefaults, false);
+        // Update the cursor position on mouse move
+        document.addEventListener("mousemove", mouseCursor);
+
+        function mouseCursor(e) {
+          let x = e.clientX;
+          let y = e.clientY;
+
+          // Update the position of the cursors
+          innerCursor.style.left = `${x}px`;
+          innerCursor.style.top = `${y}px`;
+          outerCursor.style.left = `${x}px`;
+          outerCursor.style.top = `${y}px`;
+        }
+
+        // Increase the size of the inner cursor on hover over clickable elements
+        let clickableElements = document.querySelectorAll("button, label, a");
+
+        clickableElements.forEach((element) => {
+          element.addEventListener("mouseover", () => {
+            innerCursor.classList.add("grow");
           });
 
-          // Highlight drop area when item is dragged over it
-          ['dragenter', 'dragover'].forEach(eventName => {
-              dropArea.addEventListener(eventName, highlight, false);
+          element.addEventListener("mouseleave", () => {
+            innerCursor.classList.remove("grow");
+          });
+        });
+
+        // Get the circles and set initial coordinates
+        const coords = { x: 0, y: 0 };
+        const circles = document.querySelectorAll(".circle");
+
+        circles.forEach(function (circle) {
+          circle.x = 0;
+          circle.y = 0;
+        });
+
+        // Update the coordinates on mouse move
+        window.addEventListener("mousemove", function (e) {
+          coords.x = e.clientX;
+          coords.y = e.clientY;
+        });
+
+        // Animate the circles
+        function animateCircles() {
+          let x = coords.x;
+          let y = coords.y;
+
+          circles.forEach(function (circle, index) {
+            // Update the position and size of the circle
+            circle.style.left = x - circle.offsetWidth / 2 + "px";
+            circle.style.top = y - circle.offsetHeight / 2 + "px";
+            circle.style.transform = `scale(${
+              (circles.length - index) / circles.length
+            })`;
+
+            circle.x = x;
+            circle.y = y;
+
+            // Update the next circle's position
+            const nextCircle = circles[index + 1] || circles[0];
+            x += (nextCircle.x - x) * 0.12;
+            y += (nextCircle.y - y) * 0.12;
           });
 
-          // Remove highlight when item is dragged out of drop area
-          ['dragleave', 'drop'].forEach(eventName => {
-              dropArea.addEventListener(eventName, unhighlight, false);
-          });
+          requestAnimationFrame(animateCircles);
+        }
 
-          // Handle dropped files
-          dropArea.addEventListener('drop', handleDrop, false);
-
-          function preventDefaults(event) {
-              event.preventDefault();
-              event.stopPropagation();
-          }
-
-          function highlight() {
-              dropArea.classList.add('highlight');
-          }
-
-          function unhighlight() {
-              dropArea.classList.remove('highlight');
-          }
-
-          function handleDrop(event) {
-              var dt = event.dataTransfer;
-              var files = dt.files;
-              handleFiles(files);
-          }
-
-          function handleFiles(files) {
-              // Handle uploaded files here
-              var file = files[0]; // Assuming only one file is dropped
-              document.getElementById('file-input').files = files; // Populate file input with dropped file
-              document.getElementById('file-label').textContent = file.name; // Update label with file name
-          }
-
-          // Add event listener to file input for manual file selection
-          document.getElementById('file-input').addEventListener('change', function(event) {
-              var file = event.target.files[0];
-              document.getElementById('file-label').textContent = file.name;
-          });
-
-          // Handle form submission
-          document.getElementById('upload-form').addEventListener('submit', function(event) {
-              event.preventDefault();
-              var form = event.target;
-              var formData = new FormData(form);
-              fetch(form.action, {
-                  method: 'POST',
-                  body: formData
-              })
-              .then(response => response.json())
-              .then(data => {
-                  // Handle response (if needed)
-                  console.log(data);
-                  // Optionally, you can update the UI to display the processed image
-              })
-              .catch(error => console.error('Error:', error));
-          });
-
-          // JavaScript functions for image navigation
-          var currentIndex = 0;
-          var imageNames = [
-              {% for image_name in image_names %}
-                  "{{ image_name }}",
-              {% endfor %}
-          ];
-
-          function changeImage(offset) {
-              currentIndex += offset;
-              if (currentIndex < 0) {
-                  currentIndex = imageNames.length - 1;
-              } else if (currentIndex >= imageNames.length) {
-                  currentIndex = 0;
-              }
-              var imageElement = document.getElementById("image");
-              imageElement.src = "{{ url_for('static', filename='images/') }}" + imageNames[currentIndex];
-              imageElement.alt = imageNames[currentIndex];
-          }
-
-          document.addEventListener("keydown", function(event) {
-              if (event.keyCode === 37) {  // Left arrow key
-                  changeImage(-1);
-              } else if (event.keyCode === 39) {  // Right arrow key
-                  changeImage(1);
-              }
-          });
-
-          var lastScrollTop = 0;
-
-          window.addEventListener("scroll", function() {
-              var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-              if (currentScroll > lastScrollTop) {
-                  // Scrolling down
-                  var currentSection = document.querySelector('.fade-in');
-                  if (currentSection.nextElementSibling) {
-                      currentSection.classList.remove('fade-in');
-                      currentSection.classList.add('fade-out');
-                      currentSection.nextElementSibling.classList.add('fade-in');
-                  }
-              } else {
-                  // Scrolling up
-                  var currentSection = document.querySelector('.fade-in');
-                  if (currentSection.previousElementSibling) {
-                      currentSection.classList.remove('fade-in');
-                      currentSection.classList.add('fade-out');
-                      currentSection.previousElementSibling.classList.add('fade-in');
-                  }
-              }
-
-              lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-          });
+        animateCircles();
       });
-
-      function toggleFavorite() {
-          var heartIcon = document.getElementById('heartIcon');
-          var imageSrc = document.getElementById('image').src;
-
-          if (heartIcon.classList.contains('bxs-heart')) {
-              // Remove from favorites (bxs-heart -> bx-heart)
-              heartIcon.classList.remove('bxs-heart');
-              heartIcon.classList.add('bx-heart');
-              removeFromFavorites(imageSrc);
-          } else {
-              // Add to favorites (bx-heart -> bxs-heart)
-              heartIcon.classList.remove('bx-heart');
-              heartIcon.classList.add('bxs-heart');
-              addToFavorites(imageSrc);
-          }
-      }
-
-      function addToFavorites(imageSrc) {
-          // Send an AJAX request to add the image to fav.csv
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/add-to-favorites', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  console.log('Image added to favorites.');
-              }
-          };
-          xhr.send(JSON.stringify({ imageSrc: imageSrc }));
-      }
-
-      function removeFromFavorites(imageSrc) {
-          // Send an AJAX request to remove the image from fav.csv
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/remove-from-favorites', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  console.log('Image removed from favorites.');
-              }
-          };
-          xhr.send(JSON.stringify({ imageSrc: imageSrc }));
-      }
     </script>
   </body>
 </html>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cursor = document.createElement("div");
+    cursor.classList.add("circle"); // Apply the .circle class
+    document.body.appendChild(cursor);
+
+    document.addEventListener("mousemove", function (e) {
+      // Calculate the distance to move the cursor more quickly
+      const dx = (e.pageX - parseInt(cursor.style.left || 0, 10)) / 10;
+      const dy = (e.pageY - parseInt(cursor.style.top || 0, 10)) / 10;
+
+      // Update the cursor position
+      cursor.style.left = `${parseInt(cursor.style.left || 0, 10) + dx}px`;
+      cursor.style.top = `${parseInt(cursor.style.top || 0, 10) + dy}px`;
+    });
+
+    // Customize cursor appearance when hovering over clickable elements
+    const clickableElements = document.querySelectorAll(
+      "a, button, input[type='submit'], input[type='file'], label[for='file-input']"
+    );
+    clickableElements.forEach((element) => {
+      element.addEventListener("mouseover", function () {
+        cursor.style.width = "30px"; // Example: Increase size on hover
+        cursor.style.height = "30px"; // Example: Increase size on hover
+      });
+      element.addEventListener("mouseout", function () {
+        cursor.style.width = "20px"; // Reset size on mouseout
+        cursor.style.height = "20px"; // Reset size on mouseout
+      });
+    });
+
+    // Customize cursor appearance on certain delay
+    const customCursorDelay = 100; // Adjust delay as needed
+    setInterval(function () {
+      cursor.style.backgroundColor = "transparent";
+    }, customCursorDelay);
+  });
+</script>

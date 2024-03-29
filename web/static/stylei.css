@@ -1,0 +1,168 @@
+body {
+  background-color: lightblue;
+  font-family: Arial, sans-serif;
+}
+
+.circle {
+  position: absolute;
+  width: 10px; /* Adjust size as needed */
+  height: 10px; /* Adjust size as needed */
+  border-radius: 50%;
+  background-color: blue; /* Adjust color as needed */
+  transition: transform 0.3s ease; /* Add transition effect */
+}
+
+.inner-cursor {
+  position: absolute;
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  border-radius: 50%;
+  background-color: red; /* Adjust color as needed */
+  transform: translate(-50%, -50%);
+
+  mix-blend-mode: normal;
+  transition: width 0.5s, height 0.5s; /* Add transition effect */
+}
+
+.outer-cursor {
+  position: fixed;
+  width: 25px; /* Adjust size as needed */
+  height: 25px; /* Adjust size as needed */
+  border-radius: 50%;
+  /* Other styles */
+}
+
+/* Hover effect */
+.circle:hover {
+  transform: scale(1.5); /* Adjust scale factor as needed */
+}
+
+/* Hover effect */
+.inner-cursor.grow {
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+  transition: width 0.5s, height 0.5s; /* Add transition effect */
+}
+
+.action-icons {
+  position: absolute;
+  padding-top: 20px; /* Adjusted padding */
+  bottom: 20px; /* Adjusted bottom spacing */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center; /* Center the icons horizontally */
+  gap: 10px; /* Reduced gap between icons */
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+/* Styles for logo */
+#logo {
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+}
+
+/* Styles for name */
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Styles for icons */
+.header-icons {
+  display: flex;
+  align-items: center;
+}
+
+.header-icons i {
+  margin-right: 10px;
+  padding-right: 40px;
+  color: black; /* Use the default text color */
+  text-decoration: none; /* Remove underline */
+  font-size: 33px;
+}
+
+/* Styles for tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.logo-name {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  margin-bottom: 20px;
+}
+#image-upload {
+  text-align: center;
+}
+
+#file-input {
+  display: none;
+}
+
+#file-label {
+  display: inline-block;
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#file-label:hover {
+  background-color: #000000;
+}
+
+#drop-area {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+#drop-area p {
+  margin: 0;
+}
+
+#upload-form button {
+  margin-top: 10px;
+  background-color: #2ecc71;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#upload-form button:hover {
+  background-color: #000000;
+}

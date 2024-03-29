@@ -1,8 +1,10 @@
 import os
 import csv
+import sys
 import random
 from flask import Flask, request, render_template, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
+import subprocess
 
 app = Flask(__name__)
 
@@ -122,9 +124,9 @@ def cart():
     images_dir = url_for('static', filename='images')
     return render_template('cart.html', image_names=selected_images, images_dir=images_dir)
 
+# Route to handle image upload and processing
 
-# Route to handle image upload and processing
-# Route to handle image upload and processing
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'image' not in request.files:
@@ -138,10 +140,15 @@ def upload_file():
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Process the uploaded file here (you can call your backend code)
-        return redirect('/sugg.html')  # Redirect to sugg.html after upload
+        # Call full.py with the uploaded image
+        subprocess.run([sys.executable, 'full.py', os.path.join(
+            app.config['UPLOAD_FOLDER'], filename)])
 
-# Define a route for /upload that only accepts POST requests
+        # Update image_names.csv after running full.py
+        with open('image_names.csv', 'r') as file:
+            image_names = file.readlines()
+            # Process image_names if needed
+        return redirect('/sugg.html')  # Redirect to sugg.html after upload
 
 
 if __name__ == '__main__':

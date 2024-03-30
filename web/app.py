@@ -34,8 +34,29 @@ def check_favorite():
                 return {'isFavorite': True}
     return {'isFavorite': False}
 
+
+@app.route('/check-ratings')
+def check_ratings():
+    image_src = request.args.get('imageSrc')
+    with open('ratings.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if image_src in row:
+                # Return the rating value if image is found
+                return {'rating': int(row[1])}
+    # Return 0 if image is not found in ratings list
+    return {'rating': 0}
 # Add the toggle_favorite route to handle adding/removing images from favorites
 
+
+@app.route('/check-rating-changes')
+def check_rating_changes():
+    ratings = []
+    with open('ratings.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            ratings.append({'imageSrc': row[0], 'rating': int(row[1])})
+    return jsonify(ratings)
 
 @app.route('/toggle-favorite', methods=['POST'])
 def toggle_favorite():
@@ -61,6 +82,36 @@ def toggle_favorite():
         writer.writerows(rows)
 
     return jsonify({'success': True})  # Return success response
+# Add the toggle_rating route to handle adding/removing images from ratings
+
+
+@app.route('/toggle-rating', methods=['POST'])
+def toggle_rating():
+    image_src = request.form['imageSrc']
+    rating = int(request.form['rating'])
+    # Read existing ratings
+    with open('ratings.csv', 'r') as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+
+    found = False
+    for row in rows:
+        if image_src in row:
+            # Update the rating value for the image
+            row[1] = str(rating)
+            found = True
+            break
+
+    if not found:
+        # If the image is not found, append a new row with the image and rating
+        rows.append([image_src, str(rating)])
+
+    # Write updated ratings
+    with open('ratings.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(rows)
+
+    return jsonify({'success': True})
 
 
 @app.route('/')
@@ -70,7 +121,25 @@ def index():
 
 @app.route('/dev.html')
 def dev():
-    return render_template('dev.html')
+    image_names = []
+    userRatings = []  # List to store user ratings
+
+    with open('image_names.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            image_names.extend(row)
+
+    # Read ratings from ratings.csv file
+    with open('ratings.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            # Assuming ratings are in the second column
+            userRatings.append(int(row[1]))
+
+    # Get the path to the images directory
+    images_dir = os.path.join(app.root_path, 'images')
+
+    return render_template('dev.html', image_names=image_names, images_dir=images_dir, userRatings=userRatings)
 
 
 @app.route('/favs.html')

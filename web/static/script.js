@@ -1,169 +1,47 @@
-document.addEventListener('DOMContentLoaded', function() {
-          var dropArea = document.getElementById('drop-area');
+const coords = { x: 0, y: 0 };
+const circles = document.querySelectorAll(".circle");
+const colors = [
+  "#1f005c",
+  "#1d146c",
+  "#19247c",
+  "#12348b",
+  "#044299",
+  "#0051a7",
+  "#0060b5",
+  "#006fc2",
+  "#007ece",
+  "#008dda",
+  "#009ce5",
+  "#00abf0",
+];
+circles.forEach(function (circle, index) {
+  circle.x = 0;
+  circle.y = 0;
+  circle.style.backgroundColor = colors[index % colors.length];
+});
 
-          // Prevent default drag behaviors
-          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-              dropArea.addEventListener(eventName, preventDefaults, false);
-              document.body.addEventListener(eventName, preventDefaults, false);
-          });
+window.addEventListener("mousemove", function (e) {
+  coords.x = e.clientX;
+  coords.y = e.clientY;
+});
 
-          // Highlight drop area when item is dragged over it
-          ['dragenter', 'dragover'].forEach(eventName => {
-              dropArea.addEventListener(eventName, highlight, false);
-          });
+function animateCircles() {
+  let x = coords.x;
+  let y = coords.y;
 
-          // Remove highlight when item is dragged out of drop area
-          ['dragleave', 'drop'].forEach(eventName => {
-              dropArea.addEventListener(eventName, unhighlight, false);
-          });
+  circles.forEach(function (circle, index) {
+    circle.style.left = x - 12 + "px";
+    circle.style.top = y - 12 + "px";
 
-          // Handle dropped files
-          dropArea.addEventListener('drop', handleDrop, false);
+    circle.style.scale = 1 - index / circles.length;
 
-          function preventDefaults(event) {
-              event.preventDefault();
-              event.stopPropagation();
-          }
+    circle.x = x;
+    circle.y = y;
 
-          function highlight() {
-              dropArea.classList.add('highlight');
-          }
-
-          function unhighlight() {
-              dropArea.classList.remove('highlight');
-          }
-
-          function handleDrop(event) {
-              var dt = event.dataTransfer;
-              var files = dt.files;
-              handleFiles(files);
-          }
-
-          function handleFiles(files) {
-              // Handle uploaded files here
-              var file = files[0]; // Assuming only one file is dropped
-              document.getElementById('file-input').files = files; // Populate file input with dropped file
-              document.getElementById('file-label').textContent = file.name; // Update label with file name
-          }
-
-          // Add event listener to file input for manual file selection
-          document.getElementById('file-input').addEventListener('change', function(event) {
-              var file = event.target.files[0];
-              document.getElementById('file-label').textContent = file.name;
-          });
-
-          // Handle form submission
-          document.getElementById('upload-form').addEventListener('submit', function(event) {
-              event.preventDefault();
-              var form = event.target;
-              var formData = new FormData(form);
-              fetch(form.action, {
-                  method: 'POST',
-                  body: formData
-              })
-              .then(response => response.json())
-              .then(data => {
-                  // Handle response (if needed)
-                  console.log(data);
-                  // Optionally, you can update the UI to display the processed image
-              })
-              .catch(error => console.error('Error:', error));
-          });
-
-          // JavaScript functions for image navigation
-          var currentIndex = 0;
-          var imageNames = [
-              {% for image_name in image_names %}
-                  "{{ image_name }}",
-              {% endfor %}
-          ];
-
-          function changeImage(offset) {
-              currentIndex += offset;
-              if (currentIndex < 0) {
-                  currentIndex = imageNames.length - 1;
-              } else if (currentIndex >= imageNames.length) {
-                  currentIndex = 0;
-              }
-              var imageElement = document.getElementById("image");
-              imageElement.src = "{{ url_for('static', filename='images/') }}" + imageNames[currentIndex];
-              imageElement.alt = imageNames[currentIndex];
-          }
-
-          document.addEventListener("keydown", function(event) {
-              if (event.keyCode === 37) {  // Left arrow key
-                  changeImage(-1);
-              } else if (event.keyCode === 39) {  // Right arrow key
-                  changeImage(1);
-              }
-          });
-
-          var lastScrollTop = 0;
-
-          window.addEventListener("scroll", function() {
-              var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-              if (currentScroll > lastScrollTop) {
-                  // Scrolling down
-                  var currentSection = document.querySelector('.fade-in');
-                  if (currentSection.nextElementSibling) {
-                      currentSection.classList.remove('fade-in');
-                      currentSection.classList.add('fade-out');
-                      currentSection.nextElementSibling.classList.add('fade-in');
-                  }
-              } else {
-                  // Scrolling up
-                  var currentSection = document.querySelector('.fade-in');
-                  if (currentSection.previousElementSibling) {
-                      currentSection.classList.remove('fade-in');
-                      currentSection.classList.add('fade-out');
-                      currentSection.previousElementSibling.classList.add('fade-in');
-                  }
-              }
-
-              lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-          });
-      });
-
-      function toggleFavorite() {
-          var heartIcon = document.getElementById('heartIcon');
-          var imageSrc = document.getElementById('image').src;
-
-          if (heartIcon.classList.contains('bxs-heart')) {
-              // Remove from favorites (bxs-heart -> bx-heart)
-              heartIcon.classList.remove('bxs-heart');
-              heartIcon.classList.add('bx-heart');
-              removeFromFavorites(imageSrc);
-          } else {
-              // Add to favorites (bx-heart -> bxs-heart)
-              heartIcon.classList.remove('bx-heart');
-              heartIcon.classList.add('bxs-heart');
-              addToFavorites(imageSrc);
-          }
-      }
-
-      function addToFavorites(imageSrc) {
-          // Send an AJAX request to add the image to fav.csv
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/add-to-favorites', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  console.log('Image added to favorites.');
-              }
-          };
-          xhr.send(JSON.stringify({ imageSrc: imageSrc }));
-      }
-
-      function removeFromFavorites(imageSrc) {
-          // Send an AJAX request to remove the image from fav.csv
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/remove-from-favorites', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  console.log('Image removed from favorites.');
-              }
-          };
-          xhr.send(JSON.stringify({ imageSrc: imageSrc }));
-      }
+    const nextCirlce = circles[index + 1] || circles[0];
+    x += (nextCirlce.x - x) * 0.2;
+    y += (nextCirlce.y - y) * 0.2;
+  });
+  requestAnimationFrame(animateCircles);
+}
+animateCircles();

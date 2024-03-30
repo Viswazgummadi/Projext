@@ -6,7 +6,7 @@
     <title>Enigma</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+      href="{{ url_for('static', filename='stylei.css') }}"
     />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -16,6 +16,9 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/boxicons/2.0.7/css/boxicons.min.css"
     />
+    <style>
+      /* Add your custom CSS styles here */
+    </style>
   </head>
   <body>
     <div class="circle"></div>
@@ -27,8 +30,7 @@
     <div class="circle"></div>
     <div class="circle"></div>
     <div class="circle"></div>
-    <div class="inner-cursor"></div>
-    <div class="outer-cursor"></div>
+    <div class="circle"></div>
     <div class="header-container">
       <!-- Logo and name -->
       <div class="logo-name">
@@ -114,122 +116,7 @@
         <button type="submit" style="margin-bottom: 30px">Upload</button>
       </form>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Get the inner and outer cursors
-        let innerCursor = document.querySelector(".inner-cursor");
-        let outerCursor = document.querySelector(".outer-cursor");
 
-        // Update the cursor position on mouse move
-        document.addEventListener("mousemove", mouseCursor);
-
-        function mouseCursor(e) {
-          let x = e.clientX;
-          let y = e.clientY;
-
-          // Update the position of the cursors
-          innerCursor.style.left = `${x}px`;
-          innerCursor.style.top = `${y}px`;
-          outerCursor.style.left = `${x}px`;
-          outerCursor.style.top = `${y}px`;
-        }
-
-        // Increase the size of the inner cursor on hover over clickable elements
-        let clickableElements = document.querySelectorAll("button, label, a");
-
-        clickableElements.forEach((element) => {
-          element.addEventListener("mouseover", () => {
-            innerCursor.classList.add("grow");
-          });
-
-          element.addEventListener("mouseleave", () => {
-            innerCursor.classList.remove("grow");
-          });
-        });
-
-        // Get the circles and set initial coordinates
-        const coords = { x: 0, y: 0 };
-        const circles = document.querySelectorAll(".circle");
-
-        circles.forEach(function (circle) {
-          circle.x = 0;
-          circle.y = 0;
-        });
-
-        // Update the coordinates on mouse move
-        window.addEventListener("mousemove", function (e) {
-          coords.x = e.clientX;
-          coords.y = e.clientY;
-        });
-
-        // Animate the circles
-        function animateCircles() {
-          let x = coords.x;
-          let y = coords.y;
-
-          circles.forEach(function (circle, index) {
-            // Update the position and size of the circle
-            circle.style.left = x - circle.offsetWidth / 2 + "px";
-            circle.style.top = y - circle.offsetHeight / 2 + "px";
-            circle.style.transform = `scale(${
-              (circles.length - index) / circles.length
-            })`;
-
-            circle.x = x;
-            circle.y = y;
-
-            // Update the next circle's position
-            const nextCircle = circles[index + 1] || circles[0];
-            x += (nextCircle.x - x) * 0.12;
-            y += (nextCircle.y - y) * 0.12;
-          });
-
-          requestAnimationFrame(animateCircles);
-        }
-
-        animateCircles();
-      });
-    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>
-
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const cursor = document.createElement("div");
-    cursor.classList.add("circle"); // Apply the .circle class
-    document.body.appendChild(cursor);
-
-    document.addEventListener("mousemove", function (e) {
-      // Calculate the distance to move the cursor more quickly
-      const dx = (e.pageX - parseInt(cursor.style.left || 0, 10)) / 10;
-      const dy = (e.pageY - parseInt(cursor.style.top || 0, 10)) / 10;
-
-      // Update the cursor position
-      cursor.style.left = `${parseInt(cursor.style.left || 0, 10) + dx}px`;
-      cursor.style.top = `${parseInt(cursor.style.top || 0, 10) + dy}px`;
-    });
-
-    // Customize cursor appearance when hovering over clickable elements
-    const clickableElements = document.querySelectorAll(
-      "a, button, input[type='submit'], input[type='file'], label[for='file-input']"
-    );
-    clickableElements.forEach((element) => {
-      element.addEventListener("mouseover", function () {
-        cursor.style.width = "30px"; // Example: Increase size on hover
-        cursor.style.height = "30px"; // Example: Increase size on hover
-      });
-      element.addEventListener("mouseout", function () {
-        cursor.style.width = "20px"; // Reset size on mouseout
-        cursor.style.height = "20px"; // Reset size on mouseout
-      });
-    });
-
-    // Customize cursor appearance on certain delay
-    const customCursorDelay = 100; // Adjust delay as needed
-    setInterval(function () {
-      cursor.style.backgroundColor = "transparent";
-    }, customCursorDelay);
-  });
-</script>

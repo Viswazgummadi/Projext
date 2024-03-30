@@ -18,6 +18,16 @@
     />
   </head>
   <body>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="inner-cursor"></div>
     <div class="header-container">
       <!-- Logo and name -->
       <div class="logo-name">
@@ -107,7 +117,6 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Get the inner and outer cursors
         let innerCursor = document.querySelector(".inner-cursor");
-        let outerCursor = document.querySelector(".outer-cursor");
 
         // Update the cursor position on mouse move
         document.addEventListener("mousemove", mouseCursor);
@@ -141,10 +150,24 @@
         // Get the circles and set initial coordinates
         const coords = { x: 0, y: 0 };
         const circles = document.querySelectorAll(".circle");
-
-        circles.forEach(function (circle) {
+        const colors = [
+          "#1f005c",
+          "#1d146c",
+          "#19247c",
+          "#12348b",
+          "#044299",
+          "#0051a7",
+          "#0060b5",
+          "#006fc2",
+          "#007ece",
+          "#008dda",
+          "#009ce5",
+          "#00abf0",
+        ];
+        circles.forEach(function (circle, index) {
           circle.x = 0;
           circle.y = 0;
+          circle.style.backgroundColor = colors[index % colors.length];
         });
 
         // Update the coordinates on mouse move

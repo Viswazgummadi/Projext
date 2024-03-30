@@ -203,6 +203,26 @@
 
         animateCircles();
       });
+      document.addEventListener("DOMContentLoaded", function () {
+            // Get the file input element
+            const fileInput = document.getElementById('file-input');
+            // Get the file label element
+            const fileLabel = document.getElementById('file-label');
+
+            // Add event listener to file input to update label text
+            fileInput.addEventListener('change', function() {
+                // Check if a file is selected
+                if (fileInput.files.length > 0) {
+                    // Get the file name
+                    const fileName = fileInput.files[0].name;
+                    // Update the label text with the file name
+                    fileLabel.textContent = fileName;
+                } else {
+                    // If no file is selected, revert to default label text
+                    fileLabel.textContent = 'Choose Image';
+                }
+            });
+        });
     </script>
   </body>
 </html>

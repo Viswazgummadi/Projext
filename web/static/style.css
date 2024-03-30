@@ -1,9 +1,13 @@
 body {
-  background-color: lightblue;
+  background-color: rgb(116, 196, 223);
   font-family: Arial, sans-serif;
 }
 * {
   cursor: none;
+}
+/* Style for the active link */
+.header-icons .tooltip a.active {
+  text-decoration: underline; /* Add underline to the active link */
 }
 
 h1 {

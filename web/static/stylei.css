@@ -1,9 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900%display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Press+Start+2P&display=swap");
 body {
-  background-color: lightblue;
+  background-color: rgb(116, 196, 223);
   font-family: Arial, sans-serif;
 }
+/* Style for the active link */
+.header-icons .tooltip a.active {
+  text-decoration: underline; /* Add underline to the active link */
+}
+
 .status {
   color: black;
   position: absolute;

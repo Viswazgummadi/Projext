@@ -23,19 +23,27 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <style>
+      .card-container3 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        z-index: -3;
+      }
+
+      .card3 {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: -4px 6px 7px rgba(0, 0, 0, 0.4);
+        width: 100%; /* Take up full width */
+        max-width: 1350px; /* Limit the maximum width of the card */
+        padding: 20px; /* Add padding as needed */
+        z-index: -3;
+      }
+    </style>
   </head>
   <body>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="inner-cursor"></div>
-    <div class="outer-cursor"></div>
     <div class="header-container">
       <!-- Logo and name -->
       <div class="logo-name">
@@ -85,13 +93,44 @@
 
         <div class="tooltip">
           <a href="dev.html" class="active"><i class="bx bxl-dev-to"></i></a>
-          <span class="tooltiptext">Dev</span>
+          <span class="tooltiptext">Playground</span>
         </div>
       </div>
     </div>
-    <div class="status">
-      <i class="bx bxs-radiation"></i> Caution!! brains at work ...
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="inner-cursor"></div>
+    <div class="card-container3">
+      <div class="card3">
+        <p>
+          This is the text inside the card.<br />This is the text inside the
+          card.<br />This is the text inside the card.<br />This is the text
+          inside the card.<br />This is the text inside the card.<br />This is
+          the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />This is the text inside the card.<br />This
+          is the text inside the card.<br />
+        </p>
+      </div>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Get the inner and outer cursors
@@ -104,11 +143,11 @@
           let x = e.clientX;
           let y = e.clientY;
 
+          x += window.pageXOffset;
+          y += window.pageYOffset;
           // Update the position of the cursors
           innerCursor.style.left = `${x}px`;
           innerCursor.style.top = `${y}px`;
-          outerCursor.style.left = `${x}px`;
-          outerCursor.style.top = `${y}px`;
         }
 
         // Increase the size of the inner cursor on hover over clickable elements
@@ -160,6 +199,9 @@
           let x = coords.x;
           let y = coords.y;
 
+          x += window.pageXOffset;
+          y += window.pageYOffset;
+
           circles.forEach(function (circle, index) {
             // Update the position and size of the circle
             circle.style.left = x - circle.offsetWidth / 2 + "px";
@@ -176,6 +218,10 @@
             x += (nextCircle.x - x) * 0.12;
             y += (nextCircle.y - y) * 0.12;
           });
+
+          // Update the position of the inner cursor with the last circle's position
+          innerCursor.style.left = x + "px";
+          innerCursor.style.top = y + "px";
 
           requestAnimationFrame(animateCircles);
         }

@@ -121,25 +121,8 @@ def index():
 
 @app.route('/dev.html')
 def dev():
-    image_names = []
-    userRatings = []  # List to store user ratings
-
-    with open('image_names.csv', 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            image_names.extend(row)
-
-    # Read ratings from ratings.csv file
-    with open('ratings.csv', 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            # Assuming ratings are in the second column
-            userRatings.append(int(row[1]))
-
-    # Get the path to the images directory
-    images_dir = os.path.join(app.root_path, 'images')
-
-    return render_template('dev.html', image_names=image_names, images_dir=images_dir, userRatings=userRatings)
+    
+    return render_template('dev.html')
 
 
 @app.route('/favs.html')

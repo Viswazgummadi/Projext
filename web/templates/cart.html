@@ -136,9 +136,12 @@
       <button class="prev" onclick="changeImage(-1)">&#10094;</button>
       <button class="next" onclick="changeImage(1)">&#10095;</button>
       {% for image_name in image_names %}
+      <!-- Construct the full path to the image -->
+      {% set image_path = 'images/shirts/' + image_name.split('/')[-1] %}
+
       <div class="image-wrapper" id="image{{ loop.index0 }}">
         <img
-          src="{{ url_for('static', filename='images/' + image_name) }}"
+          src="{{ url_for('static', filename=image_path) }}"
           alt="{{ image_name }}"
         />
         <div class="action-icons">

@@ -58,6 +58,7 @@ def check_rating_changes():
             ratings.append({'imageSrc': row[0], 'rating': int(row[1])})
     return jsonify(ratings)
 
+
 @app.route('/toggle-favorite', methods=['POST'])
 def toggle_favorite():
     image_src = request.form['imageSrc']
@@ -121,7 +122,7 @@ def index():
 
 @app.route('/dev.html')
 def dev():
-    
+
     return render_template('dev.html')
 
 
@@ -133,13 +134,14 @@ def favs():
         for row in reader:
             image_paths.extend(row)
 
-    # Extract filenames from image paths
-    image_names = [os.path.basename(path) for path in image_paths]
-
     # Get the path to the images directory
-    images_dir = os.path.join(app.root_path, 'images')
+    images_dir_male = os.path.join(app.root_path, 'static', 'images', 'male')
+    images_dir_female = os.path.join(
+        app.root_path, 'static', 'images', 'female')
+    images_dir_shirts = os.path.join(
+        app.root_path, 'static', 'images', 'shirts')
 
-    return render_template('favs.html', image_names=image_names, images_dir=images_dir)
+    return render_template('favs.html', image_paths=image_paths, images_dir_male=images_dir_male, images_dir_female=images_dir_female, images_dir_shirts=images_dir_shirts)
 
 
 @app.route('/work.html')
@@ -169,11 +171,17 @@ def sugg():
 @app.route('/cart.html')
 def cart():
     # Get list of all image filenames in static/images folder
-    image_files = os.listdir(os.path.join(app.static_folder, 'images'))
-    # Randomly select 10 images
-    selected_images = random.sample(image_files, 10)
-    # Get the path to the images directory
-    images_dir = url_for('static', filename='images')
+    images_dir = os.path.join(app.static_folder, 'images', 'shirts')
+    image_files = os.listdir(images_dir)
+
+    # Ensure there are enough images to sample from
+    if len(image_files) >= 10:
+        # Randomly select 10 images
+        selected_images = random.sample(image_files, 10)
+    else:
+        # If there are not enough images, select all available images
+        selected_images = image_files
+
     return render_template('cart.html', image_names=selected_images, images_dir=images_dir)
 
 # Route to handle image upload and processing

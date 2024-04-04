@@ -135,12 +135,15 @@
     <div class="image-container" id="suggestor">
       <button class="prev" onclick="changeImage(-1)">&#10094;</button>
       <button class="next" onclick="changeImage(1)">&#10095;</button>
-      {% for image_name in image_names %}
+      {% for image_path in image_paths %}
+
+      <!-- Determine the appropriate folder based on image name -->
+      {% set folder = 'male' if 'male' in image_path else ('female' if 'female'
+      in image_path else 'shirts') %}
+      <!-- Construct the full image path -->
+      {% set full_path = image_path%}
       <div class="image-wrapper" id="image{{ loop.index0 }}">
-        <img
-          src="{{ url_for('static', filename='images/' + image_name) }}"
-          alt="{{ image_name }}"
-        />
+        <img src="{{ full_path }}" alt="{{ image_path }}" />
         <div class="action-icons">
           <span class="like-btn" onclick="toggleFavorite({{ loop.index0 }})">
             <i id="heartIcon{{ loop.index0 }}" class="bx bx-heart"></i>

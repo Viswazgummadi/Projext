@@ -1,49 +1,20 @@
-# README
+# Project Report
 
-This repository contains the implementation of a project focused on image processing and computer vision techniques. Below is an overview of the contents and how to navigate through them:
+## Project Title: Image Processing and Computer Vision Pipeline
 
-## Folder Structure
+### Context:
+Our project is aimed at developing an image processing and computer vision pipeline that can analyze images, detect borders, perform color clustering, and classify images based on color features. The pipeline consists of several interconnected modules, each focusing on a specific aspect of image processing and analysis.
 
-- **part_1**: This folder contains the Jupyter Notebook `bot.ipynb`, where you can find the code related to the initial stages of the project.
+### Part 2: Border Detection
+In Part 2 of the project, our focus was on implementing border detection techniques. We utilized Canny edge detection algorithm to identify edges in images. Subsequently, we developed a method to extract a rectangular region around detected edges, providing a focused area for further analysis.
 
-- **part_2**: This folder contains the continuation of the project. It includes various modules and notebooks for different tasks:
+### Part 3: Color Clustering and Classification
+Building upon the border detection results obtained in Part 2, Part 3 of the project involved color clustering and image classification. We implemented KMeans clustering algorithm to group similar colors in the extracted regions. The clustered colors were then saved into a CSV file (`colors.csv`) for further analysis. Furthermore, a classifier was developed using the k-nearest neighbors (KNN) algorithm to categorize images based on the clustered colors. The classifier was trained on a dataset consisting of images and their corresponding color clusters. Additionally, to enhance the diversity of color suggestions, we incorporated a mechanism to generate five random color suggestions alongside the top five suggestions from the classifier.
 
-    - `clustering.ipynb`: This notebook demonstrates the implementation of a color clustering algorithm using KMeans.
-    
-    - `border_detection.ipynb`: This notebook showcases the process of detecting borders and edges in images using techniques like Canny edge detection.
-    
-    - `classifier.ipynb`: This notebook illustrates the development of a classifier using machine learning algorithms to categorize images based on certain features.
-    
-    - `web_app`: This directory contains the files for a web application built to interact with the image processing functionalities developed in the project.
+### Part 4: Web Application Implementation
+The final part of the project focused on implementing a web application to showcase the functionalities developed in the previous stages. Using Flask as the backend framework, we integrated the color clustering and classification algorithms into the web application. Users can upload images, which are then processed by the pipeline to generate color suggestions based on clustering and classification. The web interface provides an intuitive platform for users to interact with the image processing functionalities.
 
-## How to Use
+### Conclusion:
+In conclusion, our image processing and computer vision pipeline successfully integrates various techniques, including border detection, color clustering, and image classification, to analyze and classify images based on color features. The development of the web application provides a user-friendly interface for individuals to utilize these functionalities. Moving forward, further enhancements and optimizations can be made to improve the accuracy and performance of the pipeline.
 
-1. **Initial Setup**: Clone the repository to your local machine.
-
-    ```bash
-    git clone <repository-url>
-    ```
-
-2. **Navigate to Part 2**: Go to the `part_2` directory to explore the advanced functionalities of the project.
-
-    ```bash
-    cd part_2
-    ```
-
-3. **Explore Notebooks**: Open the Jupyter Notebooks (`clustering.ipynb`, `border_detection.ipynb`, `classifier.ipynb`) to delve into the different image processing techniques implemented in the project.
-
-4. **Run Web Application**: Navigate to the `web_app` directory and follow the instructions in the README file to run the web application.
-
-## Dependencies
-
-- Python 3.x
-- Jupyter Notebook
-- OpenCV
-- NumPy
-- scikit-learn
-
-## Additional Information
-
-For more details on each part of the project and its implementation, please refer to the respective Jupyter Notebook files.
-
-Feel free to reach out if you have any questions or feedback!
+For detailed implementation and code, please refer to the respective notebooks and files in the project repository.
